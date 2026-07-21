@@ -1,5 +1,5 @@
 {
-  "version": "cprc_calibration_size_v1",
+  "version": "spc_calibration_size_v1",
   "frozen_at_utc": "2026-07-15",
   "models": {
     "Qwen3-VL-32B-Instruct": {

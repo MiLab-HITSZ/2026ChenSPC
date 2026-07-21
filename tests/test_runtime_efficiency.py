@@ -7,7 +7,7 @@ class RuntimeEfficiencyTest(unittest.TestCase):
     def test_percentile_interpolates(self):
         self.assertEqual(2.5, percentile([1, 2, 3, 4], 0.5))
 
-    def test_cprc_call_structure(self):
+    def test_spc_call_structure(self):
         rows = [
             {
                 "latency_ms": 100,

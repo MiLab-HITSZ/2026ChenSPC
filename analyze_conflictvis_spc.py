@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Apply frozen CDH EB-CPRC and PAI to ConflictVIS candidate-complete tracks."""
+"""Apply frozen CDH EB-SPC and PAI to ConflictVIS candidate-complete tracks."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from typing import Any, Dict, Iterable, List, Mapping, Sequence, Tuple
 from analyze_candidate_baseline_sweep import _method_block, _replay_pai
 from analyze_cp_vbc_bayes_path_cv import normalize_key, read_jsonl
 from analyze_hierarchical_eb_lambda_cv import resolved_baseline_key, run_cv
-from analyze_pope_native_cprc import exact_mcnemar, multinomial_bootstrap_ci
+from analyze_pope_native_spc import exact_mcnemar, multinomial_bootstrap_ci
 
 
 def _load_target(paths: Iterable[Path]) -> List[Dict[str, Any]]:

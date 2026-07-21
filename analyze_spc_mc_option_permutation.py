@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Mapping, Sequence, Tuple
 
 from analyze_cp_vbc_bayes_path_cv import normalize_key, read_jsonl
-from analyze_cprc_shift_matched_controls import (
+from analyze_spc_shift_matched_controls import (
     CORE_FAMILIES,
     compare_outcomes,
     run_core_families,
@@ -301,7 +301,7 @@ def print_summary(payload: Mapping[str, Any]) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--config", default="configs/cprc_mc_option_permutation_v1.json"
+        "--config", default="configs/spc_mc_option_permutation_v1.json"
     )
     parser.add_argument("--model", action="append", default=[])
     parser.add_argument("--output", required=True)

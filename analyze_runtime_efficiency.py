@@ -55,7 +55,7 @@ def call_structure(rows: Sequence[Mapping[str, Any]]) -> Dict[str, Any]:
         candidate_counts = [len(row["cp_vbc"].get("candidates", [])) for row in cp_rows]
         teacher_forced_calls = [2 * count for count in candidate_counts]
         return {
-            "method": "H-EB CPRC score collection",
+            "method": "H-EB SPC score collection",
             "autoregressive_generations_per_row": 1,
             "teacher_forced_candidate_forwards_per_row": distribution(teacher_forced_calls),
             "candidate_count_per_row": distribution(candidate_counts),

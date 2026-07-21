@@ -191,7 +191,7 @@
         "mc_cf_mcnemar_p": 0.75390625
       },
       "llava16_34b_artifact": {
-        "score_source": "The image/no-image candidate likelihoods already collected for EB-CPRC; Qwen replay exactly reproduces the dedicated PAI score artifacts and sweep decisions.",
+        "score_source": "The image/no-image candidate likelihoods already collected for EB-SPC; Qwen replay exactly reproduces the dedicated PAI score artifacts and sweep decisions.",
         "dev_scores": "result/cprc_llava16_34b_dev70/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
         "test_scores": "result/cprc_llava16_34b_cpr_unseen/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
         "qa_selection": "result/baseline_sweeps/pai_dev70_qa_llava16_34b.json",

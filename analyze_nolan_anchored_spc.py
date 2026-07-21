@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Evaluate NoLan as an analytic anchor for paired CPRC calibration."""
+"""Evaluate NoLan as an analytic anchor for paired SPC calibration."""
 
 import argparse
 import json
@@ -9,7 +9,7 @@ from typing import Any, Dict, Mapping, Sequence
 
 import numpy as np
 
-from analyze_cprc_gate_pareto import (
+from analyze_spc_gate_pareto import (
     DevelopmentSelector,
     apply_gate_family,
     family_gate_grid,
@@ -18,7 +18,7 @@ from analyze_cprc_gate_pareto import (
     prepare_geometry,
     sha256,
 )
-from analyze_cprc_robustness import load_model_rows
+from analyze_spc_robustness import load_model_rows
 from analyze_hierarchical_eb_lambda_cv import (
     candidate_arrays,
     dataset_metrics,
@@ -28,7 +28,7 @@ from analyze_hierarchical_eb_lambda_cv import (
 )
 
 
-VERSION = "nolan_anchored_cprc_v2"
+VERSION = "nolan_anchored_spc_v2"
 
 
 def nolan_lambda(row: Mapping[str, Any], beta: float = 0.8) -> float:
@@ -247,7 +247,7 @@ def print_summary(payload: Mapping[str, Any]) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="configs/cprc_nolan_anchor_v1.json")
+    parser.add_argument("--config", default="configs/spc_nolan_anchor_v1.json")
     parser.add_argument("--model", action="append", default=[])
     parser.add_argument("--output", required=True)
     args = parser.parse_args()

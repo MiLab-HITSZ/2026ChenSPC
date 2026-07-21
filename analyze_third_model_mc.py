@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Mapping, Sequence
 
 from analyze_cp_vbc_bayes_path_cv import normalize_key, read_jsonl
-from analyze_cprc_paired_calibration import (
+from analyze_spc_paired_calibration import (
     VariantSelector,
     endpoint_metrics,
     fit_regime,
@@ -18,7 +18,7 @@ from analyze_cprc_paired_calibration import (
 from analyze_hierarchical_eb_lambda_cv import resolved_baseline_key
 
 
-VERSION = "cprc_third_model_mc_v1"
+VERSION = "spc_third_model_mc_v1"
 
 
 def sha256(path: Path) -> str:
@@ -146,7 +146,7 @@ def run_model(model: str, spec: Mapping[str, Any], config: Mapping[str, Any]) ->
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="configs/cprc_third_model_mc_v1.json")
+    parser.add_argument("--config", default="configs/spc_third_model_mc_v1.json")
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
     config_path = Path(args.config)

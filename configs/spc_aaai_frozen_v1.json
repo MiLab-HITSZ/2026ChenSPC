@@ -1,5 +1,5 @@
 {
-  "version": "cprc_aaai_frozen_v1",
+  "version": "spc_aaai_frozen_v1",
   "frozen_at_utc": "2026-07-12",
   "scope_revised_at_utc": "2026-07-13",
   "paper_scope": "Candidate-complete CDH QA and MC; caption is a causal recoverability boundary and not a claimed accuracy track.",
@@ -11,7 +11,7 @@
   },
   "primary_method": {
     "name": "Empirical-Bayes Prior-Residual Calibration",
-    "short_name": "EB-CPRC",
+    "short_name": "EB-SPC",
     "family": "empirical_bayes_prior_residual",
     "selection_objective": "delta_CF + 0.5 * delta_CS",
     "cs_cost": 0.5,
@@ -29,8 +29,8 @@
     "subcategory_labels_used_as_inference_features": false
   },
   "ablation_methods": [
-    "fixed CPRC",
-    "BayesPath CPRC",
+    "fixed SPC",
+    "BayesPath SPC",
     "no posterior-support gate",
     "no Mahalanobis abstention",
     "100-prompt J-lens diagnostic"
@@ -96,7 +96,7 @@
     "verified_unique_keys": 920,
     "prediction_differences_vs_auto_nf4": 0,
     "correctness_differences_vs_auto_nf4": 0,
-    "eb_cprc_decision_differences_vs_auto_nf4": 0,
+    "eb_spc_decision_differences_vs_auto_nf4": 0,
     "raw_text_differences_vs_auto_nf4": 1,
     "raw_text_difference_reason": "Pair 222 MC counterfactual has the same parsed prediction and exact candidate scores but a shorter generated rationale under the BF16 config's 64-token cap.",
     "blind_mc_delta_cf_cs": [0.08260869565217391, -0.008695652173913044],
@@ -109,7 +109,7 @@
     "local_model": "models/llava-v1.6-34b-hf",
     "dtype": "float16",
     "quantization": "none",
-    "protocol": "Model-native single-image and no-image candidate distributions; checkpoint-specific EB-CPRC fit on the same 70 development pairs, followed by one frozen transfer to 230 CPR-unseen pairs.",
+    "protocol": "Model-native single-image and no-image candidate distributions; checkpoint-specific EB-SPC fit on the same 70 development pairs, followed by one frozen transfer to 230 CPR-unseen pairs.",
     "dev_raw": "result/cprc_llava16_34b_dev70/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
     "dev_raw_sha256": "02fb086fd5f279354e3c50513d4f7a39f0aa97fb1eca8543b5e6b98e1ba01105",
     "dev_oof": "result/hierarchical_eb_lambda_32b/cprc_llava16_34b_dev70_oof_v1.json",
@@ -162,7 +162,7 @@
       "parameter_source": "REVIS paper LLaVA-family alpha_visual=1.1",
       "mc_delta_cf_cs": [-0.013043478260869565, 0.008695652173913044],
       "qa_delta_cf_cs": [0.14782608695652175, -0.030434782608695653],
-      "interpretation": "Official REVIS gives a useful but uniformly yes-to-no QA direction and no MC gain; EB-CPRC supplies question-conditioned candidate destinations and larger cross-format CF gains."
+      "interpretation": "Official REVIS gives a useful but uniformly yes-to-no QA direction and no MC gain; EB-SPC supplies question-conditioned candidate destinations and larger cross-format CF gains."
     }
   },
   "generator_image_source_shift": {
@@ -187,12 +187,12 @@
     "analysis_code": "analyze_runtime_efficiency.py",
     "analysis_code_sha256": "e54c12fb5b581c5604f0eb0251c41e8d3cf9d35ad7431960627a0db4daba2bd7",
     "median_latency_seconds": {
-      "qwen_eb_cprc": {"qa": 1.870, "mc": 3.2535},
+      "qwen_eb_spc": {"qa": 1.870, "mc": 3.2535},
       "qwen_official_revis": {"qa": 2.972, "mc": 2.888},
-      "llava_eb_cprc": {"qa": 14.278, "mc": 21.963},
+      "llava_eb_spc": {"qa": 14.278, "mc": 21.963},
       "llava_official_revis": {"qa": 13.799, "mc": 13.9435}
     },
-    "eb_cprc_calls": "one baseline autoregressive generation plus two teacher-forced forwards per candidate; posterior gate adds zero model forwards",
+    "eb_spc_calls": "one baseline autoregressive generation plus two teacher-forced forwards per candidate; posterior gate adds zero model forwards",
     "official_revis_calls": "one baseline and one steered autoregressive generation",
     "not_measured_in_frozen_logs": ["exact generated tokens per second", "peak GPU memory"]
   },
@@ -227,7 +227,7 @@
     "no_post_test_selection": true
   },
   "robustness_protocol": {
-    "config": "configs/cprc_robustness_v1.json",
+    "config": "configs/spc_robustness_v1.json",
     "config_sha256": "a2098286cc76df734ffa3a04e72198b9e06fa947c327b4959f60d00576eff2cb",
     "prior_controls": {
       "artifact": "result/cprc_robustness/prior_controls_qwen32b_v1.json",
@@ -264,9 +264,9 @@
   },
   "calibration_size_analysis": {
     "status": "complete",
-    "config": "configs/cprc_calibration_size_v1.json",
+    "config": "configs/spc_calibration_size_v1.json",
     "config_sha256": "047c06ade6d9e3a9517b67697fb432e9f094ec036c2529996cf4dcbc0927898d",
-    "analysis_code": "analyze_cprc_calibration_size.py",
+    "analysis_code": "analyze_spc_calibration_size.py",
     "analysis_code_sha256": "f1dc8bd963e63902825801febdae687cb5afb8153d05324a5dfb26086b5511f3",
     "artifact": "result/cprc_robustness/calibration_size_qwen_llava_v1.json",
     "artifact_sha256": "80c27ce3e42af39f9f686e2d853f518155a74463b03acdbb6235ab9e0b914a4e",
@@ -277,13 +277,13 @@
     "interpretation": "Positive mean CF repair is already visible with one pair per subcategory; additional calibration primarily increases and stabilizes MC repair."
   },
   "external_evaluation": {
-    "config": "configs/cprc_external_v1.json",
+    "config": "configs/spc_external_v1.json",
     "config_sha256": "a840d371b736c0c58f56a70a2185c7aeade65a207bb662f94efbc6a990f1900e",
     "hallusionbench": {
       "pairs": 328,
       "response_blind_selection": true,
-      "eb_cprc_delta_cf_cs_points": [4.88, -2.44],
-      "eb_cprc_cf_repairs_harms": [16, 0],
+      "eb_spc_delta_cf_cs_points": [4.88, -2.44],
+      "eb_spc_cf_repairs_harms": [16, 0],
       "official_revis_delta_cf_cs_points": [0.61, -0.91],
       "official_revis_cf_repairs_harms": [6, 4]
     },

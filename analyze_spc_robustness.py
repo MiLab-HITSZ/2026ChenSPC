@@ -19,7 +19,7 @@ from analyze_hierarchical_eb_lambda_cv import (
 )
 
 
-VERSION = "cprc_robustness_v1"
+VERSION = "spc_robustness_v1"
 SIDES = ("counterfactual", "commonsense")
 
 
@@ -442,8 +442,8 @@ def operating_points(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run frozen CPRC robustness experiments.")
-    parser.add_argument("--config", default="configs/cprc_robustness_v1.json")
+    parser = argparse.ArgumentParser(description="Run frozen SPC robustness experiments.")
+    parser.add_argument("--config", default="configs/spc_robustness_v1.json")
     parser.add_argument(
         "--experiment",
         choices=("all", "prior_controls", "repeated_splits", "operating_points"),

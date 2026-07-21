@@ -1,6 +1,6 @@
 import unittest
 
-from analyze_cprc_attribution import (
+from analyze_spc_attribution import (
     fixed_lambda_prediction,
     policy_summary,
     prior_alignment,
@@ -29,7 +29,7 @@ def make_row(side, gt, baseline, image_scores, prior_scores):
     }
 
 
-class CPRCAttributionTest(unittest.TestCase):
+class SPCAttributionTest(unittest.TestCase):
     def setUp(self):
         self.cs = make_row(
             "commonsense",

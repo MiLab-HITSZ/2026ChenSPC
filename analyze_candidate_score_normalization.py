@@ -12,14 +12,14 @@ from typing import Any, Dict, List, Mapping, Sequence
 import numpy as np
 
 from analyze_cp_vbc_bayes_path_cv import normalize_key
-from analyze_cprc_paired_calibration import (
+from analyze_spc_paired_calibration import (
     VariantSelector,
     endpoint_metrics,
     fit_regime,
     selected_ids,
 )
-from analyze_cprc_robustness import load_model_rows
-from analyze_cprc_gate_pareto import json_safe
+from analyze_spc_robustness import load_model_rows
+from analyze_spc_gate_pareto import json_safe
 from analyze_hierarchical_eb_lambda_cv import candidate_arrays
 
 

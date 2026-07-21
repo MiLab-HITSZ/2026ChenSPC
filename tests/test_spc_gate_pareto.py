@@ -5,7 +5,7 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from analyze_cprc_gate_pareto import (
+from analyze_spc_gate_pareto import (
     _gate_passes,
     corrected_proposals,
     json_safe,

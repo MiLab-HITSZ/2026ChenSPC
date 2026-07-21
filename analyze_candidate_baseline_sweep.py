@@ -7,7 +7,7 @@ import math
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
-from cprc_vlm_runtime import extract_first_letter, extract_yes_no
+from spc_vlm_runtime import extract_first_letter, extract_yes_no
 
 
 METHOD_CONFIG_KEYS = {

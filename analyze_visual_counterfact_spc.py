@@ -10,8 +10,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Mapping, Sequence, Tuple
 
 from analyze_cp_vbc_bayes_path_cv import normalize_key, read_jsonl
-from analyze_cprc_gate_pareto import paired_counts
-from analyze_cprc_shift_matched_controls import CORE_FAMILIES, run_core_families
+from analyze_spc_gate_pareto import paired_counts
+from analyze_spc_shift_matched_controls import CORE_FAMILIES, run_core_families
 from analyze_hierarchical_eb_lambda_cv import (
     dataset_metrics,
     exact_mcnemar_pvalue,

@@ -1,4 +1,4 @@
-from analyze_cprc_mc_option_permutation import (
+from analyze_spc_mc_option_permutation import (
     holm_adjust,
     paired_method_test,
     paired_variant_test,

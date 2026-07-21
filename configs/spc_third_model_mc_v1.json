@@ -1,5 +1,5 @@
 {
-  "version": "cprc_third_model_mc_v1",
+  "version": "spc_third_model_mc_v1",
   "frozen_at_utc": "2026-07-16",
   "models": {
     "Qwen3-VL-30B-A3B-Instruct": {

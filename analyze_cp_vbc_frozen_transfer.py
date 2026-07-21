@@ -270,7 +270,7 @@ def run_frozen_transfer(
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Fit fixed/BayesPath CPRC on development rows and apply once to a disjoint test set."
+        description="Fit fixed/BayesPath SPC on development rows and apply once to a disjoint test set."
     )
     parser.add_argument("--development", required=True)
     parser.add_argument("--test", required=True)

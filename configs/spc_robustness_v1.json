@@ -1,5 +1,5 @@
 {
-  "version": "cprc_robustness_v1",
+  "version": "spc_robustness_v1",
   "frozen_at_utc": "2026-07-14",
   "models": {
     "Qwen3-VL-32B-Instruct": {

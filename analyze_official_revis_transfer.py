@@ -13,7 +13,7 @@ from typing import Any, Iterable
 
 import numpy as np
 
-from cprc_vlm_runtime import extract_first_letter, extract_yes_no, score_answer
+from spc_vlm_runtime import extract_first_letter, extract_yes_no, score_answer
 
 
 def exact_mcnemar(repairs: int, harms: int) -> float:

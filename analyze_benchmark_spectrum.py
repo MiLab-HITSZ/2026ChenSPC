@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
-"""Benchmark-spectrum offline evaluation of the frozen CPRC learned route.
+"""Benchmark-spectrum offline evaluation of the frozen SPC learned route.
 
-Hypothesis under test: the frozen learned MAP route (CPRC, Selective Support
+Hypothesis under test: the frozen learned MAP route (SPC, Selective Support
 Gate, map_no_laplace_or_density at development CS budget 0.04 from
 result/cprc_robustness/gate_pareto_qwen_llava_v1.json; Qwen l2=0.01 cap=1.0
 margin=0.3, LLaVA l2=0.01 cap=0.8 margin=0.2) transfers only to CDH-type
 conflict benchmarks; on existence-hallucination benchmarks it intervenes
-(approximately) never and does not damage native accuracy; the CPRC+NoLan
+(approximately) never and does not damage native accuracy; the SPC+NoLan
 extension inherits NoLan's damage on existence benchmarks.
 
 Methods replayed row by row from frozen candidate scores (pure CPU, no model
 calls):
 
-  cprc        frozen learned route: theta refit on the CDH dev70 rows with the
+  spc        frozen learned route: theta refit on the CDH dev70 rows with the
               frozen l2, frozen lambda cap and frozen gate (arity + conflict +
               posterior-support/margin), applied to the target rows.
-  cprc_nolan  CPRC+NoLan composition: if the gated learned prediction differs
+  spc_nolan  SPC+NoLan composition: if the gated learned prediction differs
               from native keep it, otherwise backfill with the NoLan proposal
               z_A (beta=0.8) when z_A != native (same rule as
               analyze_proposal_decomposition / analyze_nolan_backfill).
@@ -50,12 +50,12 @@ from typing import Any, Dict, List, Mapping, Sequence, Tuple
 
 import numpy as np
 
-import analyze_cprc_gate_pareto as gp
+import analyze_spc_gate_pareto as gp
 import analyze_hierarchical_eb_lambda_cv as eb
 import analyze_proposal_decomposition as apd
 from analyze_cp_vbc_bayes_path_cv import normalize_key, read_jsonl
-from analyze_nolan_anchored_cprc import nolan_lambda
-from analyze_pope_native_cprc import binary_metrics, exact_mcnemar
+from analyze_nolan_anchored_spc import nolan_lambda
+from analyze_pope_native_spc import binary_metrics, exact_mcnemar
 
 ROOT = Path(__file__).resolve().parent
 OUTPUT_JSON = ROOT / "result" / "paper_revision_stats" / "benchmark_spectrum.json"
@@ -88,9 +88,9 @@ POPEV2_PATH = (
 )
 
 VCF_FROZEN_JSON = "result/cprc_external/visual_counterfact_qwen_llava_v1.json"
-POPE_CPRC_JSON = "result/cprc_external/pope_native_full_cdh_frozen_bf16_v1.json"
-HB_CPRC_JSON = "result/cprc_external/hallusionbench_full_cdh_frozen_bf16_native_v1.json"
-CONFLICTVIS_CPRC_JSON = "result/cprc_external/conflictvis_full_frozen_bf16_v1.json"
+POPE_SPC_JSON = "result/cprc_external/pope_native_full_cdh_frozen_bf16_v1.json"
+HB_SPC_JSON = "result/cprc_external/hallusionbench_full_cdh_frozen_bf16_native_v1.json"
+CONFLICTVIS_SPC_JSON = "result/cprc_external/conflictvis_full_frozen_bf16_v1.json"
 NOLAN_JSONS = {
     "vcf_qwen": "result/nolan_external_transfer/visual_counterfact_qwen_nolan_v1.json",
     "vcf_llava": "result/nolan_external_transfer/visual_counterfact_llava_nolan_v1.json",
@@ -210,15 +210,15 @@ def eval_external(
     learned, _ = frozen_route(rows, geometry, frozen)
     native = [eb.resolved_baseline_key(dict(row)) for row in rows]
     nolan = nolan_predictions(rows)
-    cprc_nolan = [
+    spc_nolan = [
         learned[i] if learned[i] != native[i] else nolan[i] for i in range(len(rows))
     ]
     n_dev = len(dev_rows)
     return {
         "native": native[n_dev:],
-        "cprc": learned[n_dev:],
+        "spc": learned[n_dev:],
         "nolan": nolan[n_dev:],
-        "cprc_nolan": cprc_nolan[n_dev:],
+        "spc_nolan": spc_nolan[n_dev:],
     }
 
 
@@ -252,7 +252,7 @@ def benchmark_metrics(
     labels = [normalize_key(row.get("gt")) for row in rows]
     baseline = [str(v) for v in streams["native"]]
     out: Dict[str, Any] = {}
-    for method in ("cprc", "cprc_nolan", "nolan"):
+    for method in ("spc", "spc_nolan", "nolan"):
         predictions = [str(v) for v in streams[method]]
         per_side = {}
         for side in SIDES:
@@ -297,15 +297,15 @@ def run_cdh(
     reference = replay["reference"]
     streams = {
         "native": [str(v) for v in reference["native"]],
-        "cprc": [str(v) for v in reference["learned_route"]],
+        "spc": [str(v) for v in reference["learned_route"]],
         "nolan": [str(v) for v in reference["nolan"]],
-        "cprc_nolan": [str(v) for v in reference["cprc_map"]],
+        "spc_nolan": [str(v) for v in reference["cprc_map"]],
     }
     labels = [normalize_key(row.get("gt")) for row in rows]
     test_ids = list(geometry.test_ids)
 
     methods: Dict[str, Any] = {}
-    for method in ("cprc", "cprc_nolan", "nolan"):
+    for method in ("spc", "spc_nolan", "nolan"):
         per_side: Dict[str, Any] = {}
         for side in SIDES:
             idx = [i for i in test_ids if str(rows[i].get("side")) == side]
@@ -325,7 +325,7 @@ def run_cdh(
 
     # Cell-level verification against the frozen main_test.json summaries.
     expected = main_test["experiments"][model]["methods"]
-    report_names = {"cprc": "learned_route", "cprc_nolan": "cprc_map", "nolan": "nolan"}
+    report_names = {"spc": "learned_route", "spc_nolan": "cprc_map", "nolan": "nolan"}
     checks: Dict[str, Any] = {}
     all_match = bool(replay["verification"]["matches"])
     for method, report_name in report_names.items():
@@ -438,10 +438,10 @@ def main() -> int:
         metrics = benchmark_metrics(ext, streams)
         ref = vcf_frozen["experiments"][model]["selected"][FAMILY][budget]["by_stratum"]["overall"]
         nref = vcf_nolan_refs[model]
-        checks: Dict[str, Any] = {"cprc_vs_frozen_summary": {}, "nolan_vs_frozen_summary": {}}
-        cprc_ok = True
+        checks: Dict[str, Any] = {"spc_vs_frozen_summary": {}, "nolan_vs_frozen_summary": {}}
+        spc_ok = True
         for side in SIDES:
-            got = metrics["cprc"]["per_side"][side]
+            got = metrics["spc"]["per_side"][side]
             want_m = ref["metrics"][side]
             want_p = ref["paired"][side]
             match = (
@@ -451,8 +451,8 @@ def main() -> int:
                 and got["repairs"] == want_p["repairs"]
                 and got["harms"] == want_p["harms"]
             )
-            cprc_ok &= match
-            checks["cprc_vs_frozen_summary"][side] = {
+            spc_ok &= match
+            checks["spc_vs_frozen_summary"][side] = {
                 "expected": {
                     "correct": want_m["correct"],
                     "overrides": want_m["overrides"],
@@ -489,10 +489,10 @@ def main() -> int:
             "n_pairs": len(ext) // 2,
             "methods": metrics,
             "verification": {
-                "reference_cprc": VCF_FROZEN_JSON,
+                "reference_spc": VCF_FROZEN_JSON,
                 "reference_nolan": NOLAN_JSONS["vcf_qwen" if model.startswith("Qwen") else "vcf_llava"],
                 **checks,
-                "matches_frozen_summary": bool(cprc_ok and nolan_ok),
+                "matches_frozen_summary": bool(spc_ok and nolan_ok),
             },
         }
     input_files["visual_counterfact"] = register(list(VCF_PATHS.values()))
@@ -502,7 +502,7 @@ def main() -> int:
     hb_streams = eval_external("Qwen3-VL-32B-Instruct", hb_ext, dev_rows["Qwen3-VL-32B-Instruct"], frozen_params["Qwen3-VL-32B-Instruct"])
     hb_metrics = benchmark_metrics(hb_ext, hb_streams)
     hb_nolan_ref = json.loads((ROOT / NOLAN_JSONS["hallusionbench"]).read_text(encoding="utf-8"))
-    hb_high_repair = json.loads((ROOT / HB_CPRC_JSON).read_text(encoding="utf-8"))
+    hb_high_repair = json.loads((ROOT / HB_SPC_JSON).read_text(encoding="utf-8"))
     hb_nolan_ok = True
     hb_checks: Dict[str, Any] = {}
     for side in SIDES:
@@ -526,7 +526,7 @@ def main() -> int:
         "n_pairs": len(hb_ext) // 2,
         "methods": hb_metrics,
         "existing_high_repair_reference": {
-            "path": HB_CPRC_JSON,
+            "path": HB_SPC_JSON,
             "note": (
                 "Previous paper number: run_cv frozen_transfer re-selection "
                 "(l2=0.01, cap=1.0, margin=0.0 + density gate), not the frozen "
@@ -557,22 +557,22 @@ def main() -> int:
                 [cv_streams["native"][i] for i in idx],
                 [cv_streams[method][i] for i in idx],
             )
-            for method in ("cprc", "cprc_nolan", "nolan")
+            for method in ("spc", "spc_nolan", "nolan")
         }
     cv_nolan_ref = json.loads((ROOT / NOLAN_JSONS["conflictvis"]).read_text(encoding="utf-8"))
-    cv_cprc_ref = json.loads((ROOT / CONFLICTVIS_CPRC_JSON).read_text(encoding="utf-8"))
+    cv_spc_ref = json.loads((ROOT / CONFLICTVIS_SPC_JSON).read_text(encoding="utf-8"))
     cv_nolan_ok = (
         cv_metrics["nolan"]["overall"]["interventions"]
         == cv_nolan_ref["metrics"]["overall"]["interventions"]
         and cv_metrics["nolan"]["overall"]["repairs"] == cv_nolan_ref["metrics"]["overall"]["repairs"]
         and cv_metrics["nolan"]["overall"]["harms"] == cv_nolan_ref["metrics"]["overall"]["harms"]
     )
-    cv_cprc_ref_overall = cv_cprc_ref["metrics"]["overall"]["eb_cprc"]
-    cv_legacy_params = cv_cprc_ref["eb_fit_selection"][0]["params"]
+    cv_spc_ref_overall = cv_spc_ref["metrics"]["overall"]["eb_cprc"]
+    cv_legacy_params = cv_spc_ref["eb_fit_selection"][0]["params"]
     cv_legacy_interventions = legacy_density_gated_interventions(
         dev_rows["Qwen3-VL-32B-Instruct"], cv_ext, cv_legacy_params
     )
-    cv_legacy_ok = cv_legacy_interventions == cv_cprc_ref_overall["interventions"]
+    cv_legacy_ok = cv_legacy_interventions == cv_spc_ref_overall["interventions"]
     benchmarks["conflictvis/Qwen3-VL-32B-Instruct"] = {
         "benchmark": "ConflictVIS",
         "type": "CDH-type conflict (transfer, counterfactual side only)",
@@ -582,16 +582,16 @@ def main() -> int:
         "n_pairs": len(cv_ext),
         "methods": cv_metrics,
         "per_task": cv_tasks,
-        "existing_cprc_reference": {
-            "path": CONFLICTVIS_CPRC_JSON,
+        "existing_spc_reference": {
+            "path": CONFLICTVIS_SPC_JSON,
             "note": (
                 "Previous number used run_cv frozen_transfer re-selection "
                 "(margin=0.0 + Mahalanobis density gate); the frozen "
                 "map_no_laplace_or_density@0.04 operating point removes the "
                 "density gate, which is why the intervention counts differ."
             ),
-            "overall": cv_cprc_ref_overall,
-            "frozen_operating_point_interventions": cv_metrics["cprc"]["overall"]["interventions"],
+            "overall": cv_spc_ref_overall,
+            "frozen_operating_point_interventions": cv_metrics["spc"]["overall"]["interventions"],
         },
         "verification": {
             "reference_nolan": NOLAN_JSONS["conflictvis"],
@@ -603,7 +603,7 @@ def main() -> int:
                     "gate": cv_legacy_params["gate"],
                 },
                 "recomputed_interventions": cv_legacy_interventions,
-                "expected_interventions": cv_cprc_ref_overall["interventions"],
+                "expected_interventions": cv_spc_ref_overall["interventions"],
                 "matches_existing_artifact": bool(cv_legacy_ok),
             },
         },
@@ -628,16 +628,16 @@ def main() -> int:
     pope_labels = [normalize_key(row.get("gt")) for row in pope_rows]
     pope_binary = {
         method: binary_metrics(pope_labels, [str(v) for v in pope_streams[method]])
-        for method in ("native", "cprc", "cprc_nolan", "nolan")
+        for method in ("native", "spc", "spc_nolan", "nolan")
     }
-    pope_cprc_artifact = json.loads((ROOT / POPE_CPRC_JSON).read_text(encoding="utf-8"))
-    pope_cprc_ref = pope_cprc_artifact["results"]["overall"]
+    pope_spc_artifact = json.loads((ROOT / POPE_SPC_JSON).read_text(encoding="utf-8"))
+    pope_spc_ref = pope_spc_artifact["results"]["overall"]
     pope_nolan_ref = json.loads((ROOT / NOLAN_JSONS["pope_native"]).read_text(encoding="utf-8"))["results"]["overall"]
-    pope_legacy_params = pope_cprc_artifact["fit_selection"][0]["params"]
+    pope_legacy_params = pope_spc_artifact["fit_selection"][0]["params"]
     pope_legacy_interventions = legacy_density_gated_interventions(
         dev_rows["Qwen3-VL-32B-Instruct"], pope_rows, pope_legacy_params
     )
-    pope_legacy_ok = pope_legacy_interventions == pope_cprc_ref["interventions"]
+    pope_legacy_ok = pope_legacy_interventions == pope_spc_ref["interventions"]
     pope_nolan_ok = (
         pope_metrics["nolan"]["overall"]["interventions"] == pope_nolan_ref["interventions"]
         and pope_metrics["nolan"]["overall"]["repairs"] == pope_nolan_ref["paired_test"]["repairs"]
@@ -652,23 +652,23 @@ def main() -> int:
         "n_pairs": len(pope_rows),
         "methods": pope_metrics,
         "binary_metrics": pope_binary,
-        "existing_cprc_reference": {
-            "path": POPE_CPRC_JSON,
+        "existing_spc_reference": {
+            "path": POPE_SPC_JSON,
             "note": (
                 "Existing artifact reports 0 interventions under the run_cv "
                 "frozen_transfer selection (margin=0.0 + Mahalanobis density "
                 "gate); the frozen map_no_laplace_or_density@0.04 operating "
                 "point removes the density gate and intervenes on "
-                f"{pope_metrics['cprc']['overall']['interventions']} of 9000 rows "
+                f"{pope_metrics['spc']['overall']['interventions']} of 9000 rows "
                 "(near-zero, accuracy-neutral)."
             ),
             "overall": {
-                "interventions": pope_cprc_ref["interventions"],
-                "delta_accuracy": pope_cprc_ref["delta_accuracy"],
+                "interventions": pope_spc_ref["interventions"],
+                "delta_accuracy": pope_spc_ref["delta_accuracy"],
             },
         },
         "verification": {
-            "reference_cprc": POPE_CPRC_JSON,
+            "reference_spc": POPE_SPC_JSON,
             "legacy_density_gated_replay": {
                 "params": {
                     "l2": pope_legacy_params["l2"],
@@ -676,7 +676,7 @@ def main() -> int:
                     "gate": pope_legacy_params["gate"],
                 },
                 "recomputed_interventions": pope_legacy_interventions,
-                "expected_interventions": pope_cprc_ref["interventions"],
+                "expected_interventions": pope_spc_ref["interventions"],
                 "matches_existing_artifact": bool(pope_legacy_ok),
             },
             "reference_nolan": NOLAN_JSONS["pope_native"],
@@ -704,7 +704,7 @@ def main() -> int:
     popev2_labels = [normalize_key(row.get("gt")) for row in popev2_ext]
     popev2_binary = {
         method: binary_metrics(popev2_labels, [str(v) for v in popev2_streams[method]])
-        for method in ("native", "cprc", "cprc_nolan", "nolan")
+        for method in ("native", "spc", "spc_nolan", "nolan")
     }
     benchmarks["popev2/Qwen3-VL-32B-Instruct"] = {
         "benchmark": "POPEv2 (paired transfer)",
@@ -733,7 +733,7 @@ def main() -> int:
             "model": bench["model"],
             "n_rows": bench["n_rows"],
         }
-        for method in ("cprc", "cprc_nolan", "nolan"):
+        for method in ("spc", "spc_nolan", "nolan"):
             row[method] = joint_deltas(bench["methods"][method])
         spectrum.append(row)
 
@@ -778,15 +778,15 @@ def main() -> int:
             },
             "quadrature_points": QUADRATURE_POINTS,
             "nolan_beta": NOLAN_BETA,
-            "cprc_nolan_rule": "g_M=1 -> learned proposal; else NoLan proposal z_A when z_A != native",
+            "spc_nolan_rule": "g_M=1 -> learned proposal; else NoLan proposal z_A when z_A != native",
         },
         "inputs": input_files,
         "reference_artifacts": {
             "cdh_main_test": "result/anchored_cprc/main_test.json",
-            "vcf_cprc": VCF_FROZEN_JSON,
-            "pope_native_cprc": POPE_CPRC_JSON,
-            "hallusionbench_cprc_high_repair": HB_CPRC_JSON,
-            "conflictvis_cprc": CONFLICTVIS_CPRC_JSON,
+            "vcf_spc": VCF_FROZEN_JSON,
+            "pope_native_spc": POPE_SPC_JSON,
+            "hallusionbench_spc_high_repair": HB_SPC_JSON,
+            "conflictvis_spc": CONFLICTVIS_SPC_JSON,
             "nolan": NOLAN_JSONS,
         },
         "spectrum": spectrum,
@@ -811,7 +811,7 @@ def main() -> int:
         "% Deltas are accuracy changes vs the native baseline in percentage points (CF / CS).",
         "\\begin{tabular}{lllr rr c rr c rr c}",
         "\\toprule",
-        " & & & & \\multicolumn{3}{c}{CPRC (learned route)} & \\multicolumn{3}{c}{CPRC+NoLan} & \\multicolumn{3}{c}{NoLan} \\\\",
+        " & & & & \\multicolumn{3}{c}{SPC (learned route)} & \\multicolumn{3}{c}{SPC+NoLan} & \\multicolumn{3}{c}{NoLan} \\\\",
         "\\cmidrule(lr){5-7} \\cmidrule(lr){8-10} \\cmidrule(lr){11-13}",
         "Benchmark & Model & Type & $N$ & int. & rep./harm & $\\Delta$CF / $\\Delta$CS & int. & rep./harm & $\\Delta$CF / $\\Delta$CS & int. & rep./harm & $\\Delta$CF / $\\Delta$CS \\\\",
         "\\midrule",
@@ -840,7 +840,7 @@ def main() -> int:
             type_short.get(row["type"], row["type"]),
             str(row["n_rows"]),
         ]
-        for method in ("cprc", "cprc_nolan", "nolan"):
+        for method in ("spc", "spc_nolan", "nolan"):
             m = row[method]
             overall = benchmarks[
                 [k for k in benchmarks if benchmarks[k]["benchmark"] == row["benchmark"] and benchmarks[k]["model"] == row["model"]][0]
@@ -858,8 +858,8 @@ def main() -> int:
     for row in spectrum:
         print(
             f"{row['benchmark']:45s} {row['model']:22s} N={row['n_rows']:5d} "
-            f"CPRC int={row['cprc']['interventions']:4d} dCF={fmt_delta(row['cprc']['delta_cf'])} dCS={fmt_delta(row['cprc']['delta_cs'])} | "
-            f"CPRC+NoLan int={row['cprc_nolan']['interventions']:4d} dCF={fmt_delta(row['cprc_nolan']['delta_cf'])} dCS={fmt_delta(row['cprc_nolan']['delta_cs'])} | "
+            f"SPC int={row['spc']['interventions']:4d} dCF={fmt_delta(row['spc']['delta_cf'])} dCS={fmt_delta(row['spc']['delta_cs'])} | "
+            f"SPC+NoLan int={row['spc_nolan']['interventions']:4d} dCF={fmt_delta(row['spc_nolan']['delta_cf'])} dCS={fmt_delta(row['spc_nolan']['delta_cs'])} | "
             f"NoLan int={row['nolan']['interventions']:4d} dCF={fmt_delta(row['nolan']['delta_cf'])} dCS={fmt_delta(row['nolan']['delta_cs'])}"
         )
     return 0 if all_ok else 1

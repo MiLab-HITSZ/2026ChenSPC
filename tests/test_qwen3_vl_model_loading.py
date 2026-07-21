@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 from types import SimpleNamespace
 
-from cprc_vlm_runtime import qwen3_vl_model_class
+from spc_vlm_runtime import qwen3_vl_model_class
 
 
 class Qwen3VLModelLoadingTest(unittest.TestCase):

@@ -1,4 +1,4 @@
-from analyze_cprc_shift_matched_controls import (
+from analyze_spc_shift_matched_controls import (
     aggregate_metric_blocks,
     compare_outcomes,
     relabel_rows,

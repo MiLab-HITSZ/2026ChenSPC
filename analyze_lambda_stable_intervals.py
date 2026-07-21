@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Per-row stable intervals I_z of the frozen EB-CPRC learned route.
+"""Per-row stable intervals I_z of the frozen EB-SPC learned route.
 
 For every blind-test row this script replays the frozen learned-route operating
 point (dev70 joint MC+QA fit, l2=0.01, cap=1.0 for Qwen3-VL-32B-Instruct and
@@ -20,7 +20,7 @@ analyze_hierarchical_eb_lambda_cv.py. It then reports, per model x format cell:
       (fixed_lambda_same_gate family), as the constant-coefficient control.
 
 The replay is verified row-by-row against reference_predictions of the frozen
-anchored_cprc pipeline and cell-by-cell against the learned-route summary of
+anchored_spc pipeline and cell-by-cell against the learned-route summary of
 result/anchored_cprc/main_test.json; the verification is stored in the output.
 
 Outputs:
@@ -433,7 +433,7 @@ def make_figure(results: Mapping[str, Any], lambda_stars: Mapping[str, float]) -
 
 def main() -> int:
     import analyze_hierarchical_eb_lambda_cv as eb
-    import analyze_cprc_gate_pareto as gp
+    import analyze_spc_gate_pareto as gp
 
     aac = load_anchored_module()
     backfill_config = json.loads(aac.BACKFILL_CONFIG.read_text(encoding="utf-8"))

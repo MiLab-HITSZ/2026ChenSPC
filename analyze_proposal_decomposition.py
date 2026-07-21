@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
-"""Offline analyses over the frozen CPRC operating point.
+"""Offline analyses over the frozen SPC operating point.
 
-Three independent analyses over the frozen CPRC operating point of
+Three independent analyses over the frozen SPC operating point of
 result/anchored_cprc/main_test.json (Qwen3-VL-32B-Instruct and LLaVA-1.6-34B,
 dev70 fit, blind cpr_unseen test):
 
   decomposition  Per-row proposal-state decomposition of the learned MAP route
                  (proposal z_M, gate g_M) against the NoLan fallback proposal
                  z_A: five mutually exclusive states with CF/CS repairs and
-                 harms under CPRC-MAP, learned-route-only and NoLan-only.
+                 harms under SPC-MAP, learned-route-only and NoLan-only.
   mc_only        Ablation: fit and select the learned route on dev_mc only
                  (same l2/cap/gate grid, same development selection protocol,
                  CS budget applied to dev_mc only); report test_mc deltas and
                  compare with the joint-fit frozen operating point.
   stability      Stability radius r_i = min(lambda_i - lambda_lo,
                  lambda_hi - lambda_i) of the frozen per-row coefficient inside
-                 the exact stable interval I_z, grouped by the final CPRC-MAP
+                 the exact stable interval I_z, grouped by the final SPC-MAP
                  outcome; Mann-Whitney test of repair vs harm radii.
 
 Re-run one analysis at a time:
@@ -41,11 +41,11 @@ from typing import Any, Dict, List, Mapping, Optional, Sequence, Tuple
 
 import numpy as np
 
-import analyze_cprc_gate_pareto as gp
+import analyze_spc_gate_pareto as gp
 import analyze_hierarchical_eb_lambda_cv as eb
 from analyze_cp_vbc_bayes_path_cv import normalize_key
-from analyze_cprc_gate_pareto import prepare_geometry
-from analyze_cprc_robustness import load_model_rows
+from analyze_spc_gate_pareto import prepare_geometry
+from analyze_spc_robustness import load_model_rows
 from analyze_hierarchical_eb_lambda_cv import (
     bootstrap_delta,
     candidate_arrays,
@@ -57,11 +57,11 @@ from analyze_hierarchical_eb_lambda_cv import (
 
 ROOT = Path(__file__).resolve().parent
 # Repo-root-relative, matching the paths recorded in the frozen artifacts.
-BACKFILL_CONFIG = Path("configs/cprc_nolan_backfill_v1.json")
+BACKFILL_CONFIG = Path("configs/spc_nolan_backfill_v1.json")
 MAIN_TEST_JSON = ROOT / "result" / "anchored_cprc" / "main_test.json"
 GATE_PARETO_JSON = ROOT / "result" / "cprc_robustness" / "gate_pareto_qwen_llava_v1.json"
 GATE_PARETO_ARTIFACT = Path("result/cprc_robustness/gate_pareto_qwen_llava_v1.json")
-GATE_PARETO_CONFIG = ROOT / "configs" / "cprc_gate_pareto_v1.json"
+GATE_PARETO_CONFIG = ROOT / "configs" / "spc_gate_pareto_v1.json"
 OUTPUT_DIR = ROOT / "result" / "paper_revision_stats"
 
 NOLAN_BETA = 0.8
@@ -81,13 +81,13 @@ STATES = ("agree_modify", "learned_only", "conflict", "nolan_only", "both_keep")
 
 
 # --------------------------------------------------------------------------- #
-# frozen anchored-CPRC pipeline (self-contained)
+# frozen anchored-SPC pipeline (self-contained)
 #
 # The frozen operating point in result/anchored_cprc/main_test.json was
-# produced by an anchored-CPRC driver whose row space, NoLan anchor and
+# produced by an anchored-SPC driver whose row space, NoLan anchor and
 # reference prediction streams are reconstructed below from the released
-# modules (analyze_hierarchical_eb_lambda_cv, analyze_cprc_gate_pareto,
-# analyze_cprc_robustness, analyze_cp_vbc_bayes_path_cv). The replay is
+# modules (analyze_hierarchical_eb_lambda_cv, analyze_spc_gate_pareto,
+# analyze_spc_robustness, analyze_cp_vbc_bayes_path_cv). The replay is
 # verified row-by-row and cell-by-cell against main_test.json, so any drift
 # in these helpers fails the verification block loudly.
 # --------------------------------------------------------------------------- #
@@ -275,13 +275,13 @@ def reconstruct_primary(
 def reference_predictions(
     space: RowSpace,
     geometry: Any,
-    frozen_cprc_params: Mapping[str, Any],
+    frozen_spc_params: Mapping[str, Any],
     quadrature: int = 64,
 ) -> Dict[str, List[str]]:
     native = [resolved_baseline_key(row) for row in space.rows]
     nolan = proposals_from_scores(space, corrected_scores(space, anchor_array(space, "nolan")))
     learned = reconstruct_primary(
-        space.rows, geometry, frozen_cprc_params, "map_no_laplace_or_density", quadrature
+        space.rows, geometry, frozen_spc_params, "map_no_laplace_or_density", quadrature
     )
     cprc_map = backfill_predictions(space.rows, learned, nolan)
     return {
@@ -475,7 +475,7 @@ def run_decomposition(
         nolan = reference["nolan"]
         cprc_map = reference["cprc_map"]
 
-        # CPRC-MAP composition sanity: g_M=1 -> z_M, else z_A (which may be native).
+        # SPC-MAP composition sanity: g_M=1 -> z_M, else z_A (which may be native).
         composition_mismatch = sum(
             cprc_map[i] != (learned[i] if learned[i] != native[i] else nolan[i])
             for i in range(len(rows))
@@ -562,7 +562,7 @@ def run_decomposition(
             "test_rows": len(replay["geometry"].test_ids),
             "verification": {
                 **replay["verification"],
-                "cprc_map_composition_mismatches": int(composition_mismatch),
+                "spc_map_composition_mismatches": int(composition_mismatch),
                 "main_test_method_cells": method_checks,
                 "matches_frozen_main_test": bool(all_match),
             },
@@ -609,7 +609,7 @@ def run_decomposition(
 # --------------------------------------------------------------------------- #
 
 def geometry_for_train_ids(rows: Sequence[Dict[str, Any]], train_ids: Sequence[int], gp: Any, eb: Any) -> Any:
-    """Same construction as analyze_cprc_gate_pareto.prepare_geometry, restricted to
+    """Same construction as analyze_spc_gate_pareto.prepare_geometry, restricted to
     the given development rows for standardization, density support and arity bounds."""
     train_ids = list(train_ids)
     test_ids = [
@@ -1063,7 +1063,7 @@ def run_stability(
                 "minimum (display-scale convention of the interval figure)."
             ),
             "groups": (
-                "Outcome of the final CPRC-MAP decision vs the native answer and gold: "
+                "Outcome of the final SPC-MAP decision vs the native answer and gold: "
                 "cf/cs repair (wrong->right), cf/cs harm (right->wrong), "
                 "modified_neutral (changed without correctness change), "
                 "unchanged_correct / unchanged_wrong."

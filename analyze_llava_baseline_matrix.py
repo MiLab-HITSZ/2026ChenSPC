@@ -67,7 +67,7 @@ def revis_result(path: str, task: str) -> Dict[str, Any]:
     return output
 
 
-def cprc_result(path: str, task: str) -> Dict[str, Any]:
+def spc_result(path: str, task: str) -> Dict[str, Any]:
     payload = load(path)["result"]
     metrics = payload["evaluation_by_dataset"][f"test_{task}"]
     tests = payload["paired_tests"][f"test_{task}"]
@@ -116,7 +116,7 @@ def main() -> int:
         for task in TASKS:
             parser.add_argument(f"--{method}-{task}", required=True)
     parser.add_argument("--revis", required=True)
-    parser.add_argument("--cprc", required=True)
+    parser.add_argument("--spc", required=True)
     parser.add_argument("--output", required=True)
     args = parser.parse_args()
 
@@ -131,16 +131,16 @@ def main() -> int:
     matrix["official_revis"] = {
         task: revis_result(args.revis, task) for task in TASKS
     }
-    matrix["eb_cprc"] = {task: cprc_result(args.cprc, task) for task in TASKS}
+    matrix["eb_cprc"] = {task: spc_result(args.spc, task) for task in TASKS}
     validate_baselines(matrix)
 
     source_paths = [
         path for paths in sources.values() for path in paths.values()
-    ] + [args.revis, args.cprc]
+    ] + [args.revis, args.spc]
     payload = {
         "version": VERSION,
         "model": "LLaVA-1.6-34B-Instruct",
-        "protocol": "70-pair development selection followed by frozen 230-pair CPRC-unseen evaluation",
+        "protocol": "70-pair development selection followed by frozen 230-pair SPC-unseen evaluation",
         "sources": {
             path: sha256(Path(path)) for path in source_paths
         },

@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-import cprc_vlm_runtime as runtime
+import spc_vlm_runtime as runtime
 
 
 def llava_spec(models_root: str = "models") -> runtime.ModelSpec:

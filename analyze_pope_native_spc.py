@@ -89,7 +89,7 @@ def reconstruct_predictions(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Apply frozen CDH CPRC to native POPE.")
+    parser = argparse.ArgumentParser(description="Apply frozen CDH SPC to native POPE.")
     parser.add_argument("--pope", action="append", required=True)
     parser.add_argument("--dev-mc", required=True)
     parser.add_argument("--dev-qa", required=True)
@@ -127,7 +127,7 @@ def main() -> int:
         0.5,
         ("dev_mc", "dev_qa"),
     )
-    cprc = reconstruct_predictions(rows, result)
+    spc = reconstruct_predictions(rows, result)
     native_results = {}
     for protocol_index, protocol in enumerate(("random", "popular", "adversarial")):
         dataset = f"pope_{protocol}"
@@ -140,11 +140,11 @@ def main() -> int:
         labels = [normalize_key(row["gt"]) for row in selected]
         baseline = [resolved_baseline_key(row) for row in selected]
         corrected = [
-            cprc[(dataset, str(row["pair_id"]), str(row["side"]))]
+            spc[(dataset, str(row["pair_id"]), str(row["side"]))]
             for row in selected
         ]
         baseline_metrics = binary_metrics(labels, baseline)
-        cprc_metrics = binary_metrics(labels, corrected)
+        spc_metrics = binary_metrics(labels, corrected)
         repairs = sum(
             base != label and fixed == label
             for label, base, fixed in zip(labels, baseline, corrected)
@@ -155,9 +155,9 @@ def main() -> int:
         )
         native_results[protocol] = {
             "baseline": baseline_metrics,
-            "cprc": cprc_metrics,
-            "delta_accuracy": cprc_metrics["accuracy"] - baseline_metrics["accuracy"],
-            "delta_f1": cprc_metrics["f1"] - baseline_metrics["f1"],
+            "spc": spc_metrics,
+            "delta_accuracy": spc_metrics["accuracy"] - baseline_metrics["accuracy"],
+            "delta_f1": spc_metrics["f1"] - baseline_metrics["f1"],
             "interventions": sum(a != b for a, b in zip(baseline, corrected)),
             "intervention_rate": sum(a != b for a, b in zip(baseline, corrected))
             / len(selected),
@@ -183,7 +183,7 @@ def main() -> int:
     labels = [normalize_key(row["gt"]) for row in selected]
     baseline = [resolved_baseline_key(row) for row in selected]
     corrected = [
-        cprc[
+        spc[
             (
                 str(row["_dataset"]),
                 str(row["pair_id"]),
@@ -193,7 +193,7 @@ def main() -> int:
         for row in selected
     ]
     baseline_metrics = binary_metrics(labels, baseline)
-    cprc_metrics = binary_metrics(labels, corrected)
+    spc_metrics = binary_metrics(labels, corrected)
     repairs = sum(
         base != label and fixed == label
         for label, base, fixed in zip(labels, baseline, corrected)
@@ -205,9 +205,9 @@ def main() -> int:
     interventions = sum(base != fixed for base, fixed in zip(baseline, corrected))
     native_results["overall"] = {
         "baseline": baseline_metrics,
-        "cprc": cprc_metrics,
-        "delta_accuracy": cprc_metrics["accuracy"] - baseline_metrics["accuracy"],
-        "delta_f1": cprc_metrics["f1"] - baseline_metrics["f1"],
+        "spc": spc_metrics,
+        "delta_accuracy": spc_metrics["accuracy"] - baseline_metrics["accuracy"],
+        "delta_f1": spc_metrics["f1"] - baseline_metrics["f1"],
         "interventions": interventions,
         "intervention_rate": interventions / len(selected),
         "paired_test": {
@@ -222,7 +222,7 @@ def main() -> int:
     }
 
     artifact = {
-        "version": "pope_native_cprc_v1",
+        "version": "pope_native_spc_v1",
         "protocol": "All official COCO random/popular/adversarial questions; native yes/no metrics.",
         "calibration": "Frozen 70-pair CDH QA+MC development fit; no POPE labels used.",
         "verified_rows": len(pope_rows),

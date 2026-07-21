@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Lean Qwen3-VL/LLaVA runtime for frozen external CPRC evaluations."""
+"""Lean Qwen3-VL/LLaVA runtime for frozen external SPC evaluations."""
 
 from __future__ import annotations
 

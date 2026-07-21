@@ -12,7 +12,7 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 import numpy as np
 import torch
 
-from analyze_cprc_robustness import load_model_rows
+from analyze_spc_robustness import load_model_rows
 from analyze_hierarchical_eb_lambda_cv import (
     candidate_arrays,
     context_features,
@@ -680,7 +680,7 @@ def print_summary(payload: Mapping[str, Any]) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", default="configs/cprc_gate_pareto_v1.json")
+    parser.add_argument("--config", default="configs/spc_gate_pareto_v1.json")
     parser.add_argument("--model", action="append", default=[])
     parser.add_argument("--output", required=True)
     args = parser.parse_args()

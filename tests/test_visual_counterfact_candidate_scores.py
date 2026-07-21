@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from cprc_vlm_runtime import ModelSpec
+from spc_vlm_runtime import ModelSpec
 from evaluate_visual_counterfact_candidate_scores import score
 
 

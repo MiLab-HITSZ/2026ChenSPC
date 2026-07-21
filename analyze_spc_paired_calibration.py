@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Test whether paired CF/CS calibration is necessary for CPRC retention."""
+"""Test whether paired CF/CS calibration is necessary for SPC retention."""
 
 import argparse
 import copy
@@ -12,7 +12,7 @@ from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple
 import numpy as np
 
 from analyze_cp_vbc_bayes_path_cv import normalize_key, read_jsonl
-from analyze_cprc_gate_pareto import (
+from analyze_spc_gate_pareto import (
     apply_gate_family,
     family_gate_grid,
     json_safe,
@@ -27,7 +27,7 @@ from analyze_hierarchical_eb_lambda_cv import (
 )
 
 
-VERSION = "cprc_paired_calibration_v1"
+VERSION = "spc_paired_calibration_v1"
 TASKS = ("mc", "qa")
 SIDES = ("counterfactual", "commonsense")
 
@@ -358,7 +358,7 @@ def print_summary(payload: Mapping[str, Any]) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--config", default="configs/cprc_paired_calibration_v1.json"
+        "--config", default="configs/spc_paired_calibration_v1.json"
     )
     parser.add_argument("--model", action="append", default=[])
     parser.add_argument("--output", required=True)

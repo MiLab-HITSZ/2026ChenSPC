@@ -1,7 +1,7 @@
 {
   "version": "candidate_score_normalization_v1",
   "frozen_at_utc": "2026-07-16",
-  "paired_calibration_config": "configs/cprc_paired_calibration_v1.json",
+  "paired_calibration_config": "configs/spc_paired_calibration_v1.json",
   "primary_score": "sum of conditional token log-likelihoods over the complete answer-key branch",
   "sensitivity_score": "mean conditional token log-likelihood over the same branch",
   "fixed_lambda_grid": [0.1, 0.2, 0.3, 0.5, 0.8, 1.0, 1.2, 1.5],

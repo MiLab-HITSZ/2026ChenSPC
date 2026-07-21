@@ -9,7 +9,7 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from cprc_vlm_runtime import (
+from spc_vlm_runtime import (
     candidate_key,
     candidate_vlm_inputs,
     load_model_specs,

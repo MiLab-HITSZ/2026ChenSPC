@@ -1,5 +1,5 @@
 {
-  "version": "cprc_nolan_anchor_v1",
+  "version": "spc_nolan_backfill_v1",
   "created_at_utc": "2026-07-19",
   "models": {
     "Qwen3-VL-32B-Instruct": {
@@ -14,24 +14,17 @@
     }
   },
   "nolan_beta": 0.8,
-  "cs_budgets": [0.0, 0.02, 0.04, 0.06, 0.10],
+  "primary_family": "map_no_laplace_or_density",
+  "target_cs_budget": 0.04,
+  "quadrature_points": 64,
   "selection": {
     "objective": "mean_delta_CF + 0.5 * mean_delta_CS",
     "cs_cost": 0.5,
-    "require_nonnegative_cf_per_task": true,
-    "development_labels": ["dev_mc", "dev_qa"],
-    "test_labels": ["test_mc", "test_qa"]
-  },
-  "posterior": {
-    "l2_grid": [0.01, 0.1, 1.0, 10.0],
-    "lambda_caps": [0.8, 1.0, 1.2, 1.5],
-    "quadrature_points": 64
+    "require_nonnegative_cf_per_task": true
   },
   "fairness": {
-    "test_label_use": false,
-    "test_refit": false,
-    "anchor": "Released NoLan dynamic coefficient computed from the native image/no-image complete-answer distributions.",
-    "learned_residual": "Zero-mean Gaussian-regularized latent residual fitted only on the paired 70-pair development split.",
-    "inference_features": "The same 13 image/no-image candidate-distribution statistics as CPRC; no side, category, pair identity, or answer label."
+    "primary": "The learned MAP operating point is frozen before analytic fallback evaluation.",
+    "backfill": "Complete SPC-MAP uses released NoLan beta=0.8 only when the learned route retains the native answer.",
+    "selection": "The primary analytic fallback is fixed. A support-gated fallback is retained only as a development-selected diagnostic under the same four-point CS budget; no test label or side identity is used."
   }
 }

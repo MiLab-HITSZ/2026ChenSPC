@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 from analyze_official_revis_transfer import exact_mcnemar, load_rows, summarize
-from cprc_vlm_runtime import extract_first_letter, extract_yes_no, load_model_specs
+from spc_vlm_runtime import extract_first_letter, extract_yes_no, load_model_specs
 from evaluate_paired_qa_candidate_scores import load_baselines
 
 

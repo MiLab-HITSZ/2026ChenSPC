@@ -120,7 +120,7 @@
     },
     "eb_cprc": {
       "status": "complete",
-      "source": "configs/cprc_aaai_frozen_v1.json"
+      "source": "configs/spc_aaai_frozen_v1.json"
     }
   },
   "score_reuse": {
@@ -139,7 +139,7 @@
         "views": ["blur_downsample", "high_pass"]
       }
     },
-    "rule": "The frozen CPRC logs supply the identical native answer and image-conditioned candidate likelihoods. New forwards score only deterministic views derived from the same test image. VCD and MFCD retain their published score algebra and full predeclared grids; PAI and NoLan replay their published image/text-only score rules."
+    "rule": "The frozen SPC logs supply the identical native answer and image-conditioned candidate likelihoods. New forwards score only deterministic views derived from the same test image. VCD and MFCD retain their published score algebra and full predeclared grids; PAI and NoLan replay their published image/text-only score rules."
   },
   "fairness": {
     "single_image_only": true,

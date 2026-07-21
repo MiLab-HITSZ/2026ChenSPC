@@ -1,4 +1,4 @@
-# Reproducing the CPRC robustness experiments
+# Reproducing the SPC robustness experiments
 
 All commands are run from the repository root. The reported environment is
 listed in `requirements-paper.txt`.
@@ -22,23 +22,23 @@ Model directories are expected at
 dispatch and reject unknown Qwen3-VL architectures.
 
 Some machine-readable version and family keys retain the pre-paper identifier
-`bprc_full`. They are frozen for artifact compatibility and refer to CPRC.
+`bprc_full`. They are frozen for artifact compatibility and refer to SPC.
 
-## CPRC+NoLan composition (optional extension)
+## SPC+NoLan composition (optional extension)
 
-The optional composition gives the learned CPRC correction priority and invokes
+The optional composition gives the learned SPC correction priority and invokes
 the released NoLan analytic proposal only when that route retains the native
 answer. Both proposals reuse the same image-conditioned and prior-estimation
 candidate scores, so the composition adds no model forward pass.
 
 ```bash
 python analyze_nolan_backfill.py \
-  --config configs/cprc_nolan_backfill_v1.json \
-  --cprc-artifact result/cprc_robustness/gate_pareto_qwen_llava_v1.json \
+  --config configs/spc_nolan_backfill_v1.json \
+  --spc-artifact result/cprc_robustness/gate_pareto_qwen_llava_v1.json \
   --output result/cprc_robustness/nolan_support_backfill_qwen_llava_v1.json
 ```
 
-The paper's CPRC+NoLan row uses `nolan_raw_backfill`, the fixed released
+The paper's SPC+NoLan row uses `nolan_raw_backfill`, the fixed released
 analytic proposal on learned-route abstentions. The artifact also records a
 separately selected support-gated diagnostic, but that diagnostic is not the
 primary method.
@@ -48,15 +48,15 @@ primary method.
 ```bash
 python -m pip install -r requirements-paper.txt
 python -m pytest -q \
-  tests/test_cprc_shift_matched_controls.py \
-  tests/test_cprc_mc_option_permutation.py \
+  tests/test_spc_shift_matched_controls.py \
+  tests/test_spc_mc_option_permutation.py \
   tests/test_visual_counterfact_frozen.py \
-  tests/test_visual_counterfact_cprc.py \
-  tests/test_cprc_vlm_runtime.py \
+  tests/test_visual_counterfact_spc.py \
+  tests/test_spc_vlm_runtime.py \
   tests/test_visual_counterfact_candidate_scores.py \
   tests/test_qa_template_analysis.py \
   tests/test_qa_template_stress.py \
-  tests/test_cprc_paired_calibration.py \
+  tests/test_spc_paired_calibration.py \
   tests/test_qa_semantic_equivariance.py \
   tests/test_candidate_score_normalization.py \
   tests/test_qwen3_vl_model_loading.py \
@@ -93,8 +93,8 @@ that coefficient.
 ## Paired-calibration necessity
 
 ```bash
-python analyze_cprc_paired_calibration.py \
-  --config configs/cprc_paired_calibration_v1.json \
+python analyze_spc_paired_calibration.py \
+  --config configs/spc_paired_calibration_v1.json \
   --output result/cprc_robustness/paired_calibration_qwen_llava_v1.json
 ```
 
@@ -148,7 +148,7 @@ CUDA_VISIBLE_DEVICES=4,5,6,7 python evaluate_cdh_mc_candidate_scores.py \
   --pair-split cpr_unseen --retry 2
 
 python analyze_third_model_mc.py \
-  --config configs/cprc_third_model_mc_v1.json \
+  --config configs/spc_third_model_mc_v1.json \
   --output result/cprc_robustness/third_model_qwen30b_a3b_mc_v1.json
 ```
 
@@ -159,8 +159,8 @@ to select a policy.
 ## Matched-capacity development shifts
 
 ```bash
-python analyze_cprc_shift_matched_controls.py \
-  --config configs/cprc_shift_matched_controls_v1.json \
+python analyze_spc_shift_matched_controls.py \
+  --config configs/spc_shift_matched_controls_v1.json \
   --output result/cprc_robustness/shift_matched_controls_qwen_llava_v1.json
 ```
 
@@ -194,11 +194,11 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python evaluate_cdh_bench.py \
 ```
 
 Repeat with the LLaVA model config and the output paths listed in
-`configs/cprc_mc_option_permutation_v1.json`. Then run:
+`configs/spc_mc_option_permutation_v1.json`. Then run:
 
 ```bash
-python analyze_cprc_mc_option_permutation.py \
-  --config configs/cprc_mc_option_permutation_v1.json \
+python analyze_spc_mc_option_permutation.py \
+  --config configs/spc_mc_option_permutation_v1.json \
   --output result/cprc_robustness/mc_option_permutation_qwen_llava_v1.json
 ```
 
@@ -228,7 +228,7 @@ python evaluate_visual_counterfact_candidate_scores.py \
   --models configs/llava16_34b_instruct_transformers_answer1.json \
   --output result/visual_counterfact_frozen_v1/llava/results.jsonl
 
-python analyze_visual_counterfact_cprc.py \
+python analyze_visual_counterfact_spc.py \
   --config configs/visual_counterfact_analysis_v1.json \
   --output result/cprc_external/visual_counterfact_qwen_llava_v1.json
 ```
@@ -280,7 +280,7 @@ Writes `result/paper_revision_stats/proposal_decomposition.json`,
 the frozen operating point row by row and verifies it against
 `result/anchored_cprc/main_test.json`; the verification summary is stored in
 each output. The frozen-replay helpers are self-contained in the script and
-reuse `analyze_hierarchical_eb_lambda_cv.py` and `analyze_cprc_gate_pareto.py`.
+reuse `analyze_hierarchical_eb_lambda_cv.py` and `analyze_spc_gate_pareto.py`.
 
 ## Lambda stable intervals
 
@@ -301,8 +301,8 @@ python analyze_benchmark_spectrum.py
 Writes `result/paper_revision_stats/benchmark_spectrum.json` and
 `benchmark_spectrum_table.tex`: the six-benchmark scope table (CDH-Bench,
 VisualCounterfact, HallusionBench, ConflictVIS, POPE, POPEv2) with the frozen
-CPRC, CPRC+NoLan, and native streams. External-benchmark replays are verified
-against `result/nolan_external_transfer/*.json` and the frozen CPRC artifacts
+SPC, SPC+NoLan, and native streams. External-benchmark replays are verified
+against `result/nolan_external_transfer/*.json` and the frozen SPC artifacts
 under `result/cprc_external/`.
 
 ## Paper artifacts

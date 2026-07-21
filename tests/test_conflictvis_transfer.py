@@ -1,4 +1,4 @@
-from analyze_conflictvis_cprc import _metrics
+from analyze_conflictvis_spc import _metrics
 from prepare_conflictvis_transfer import _parse_options
 
 

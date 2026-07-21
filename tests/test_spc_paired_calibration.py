@@ -1,4 +1,4 @@
-from analyze_cprc_paired_calibration import VariantSelector, endpoint_metrics
+from analyze_spc_paired_calibration import VariantSelector, endpoint_metrics
 
 
 def row(task, side, gt, baseline):

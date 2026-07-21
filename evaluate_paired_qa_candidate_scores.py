@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Tuple
 
-from cprc_vlm_runtime import (
+from spc_vlm_runtime import (
     build_candidate_prompt,
     candidate_key,
     load_model_specs,

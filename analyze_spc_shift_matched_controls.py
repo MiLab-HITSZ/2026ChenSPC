@@ -13,8 +13,8 @@ from typing import Any, Dict, Iterable, List, Mapping, MutableMapping, Sequence,
 
 import numpy as np
 
-from analyze_cprc_calibration_size import development_pair_order, selected_manifest
-from analyze_cprc_gate_pareto import (
+from analyze_spc_calibration_size import development_pair_order, selected_manifest
+from analyze_spc_gate_pareto import (
     DevelopmentSelector,
     apply_gate_family,
     corrected_proposals,
@@ -26,7 +26,7 @@ from analyze_cprc_gate_pareto import (
     prepare_geometry,
     threshold_grid,
 )
-from analyze_cprc_robustness import load_model_rows
+from analyze_spc_robustness import load_model_rows
 from analyze_hierarchical_eb_lambda_cv import (
     exact_mcnemar_pvalue,
     fit_lambda_posterior,
@@ -552,7 +552,7 @@ def print_summary(payload: Mapping[str, Any]) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--config", default="configs/cprc_shift_matched_controls_v1.json"
+        "--config", default="configs/spc_shift_matched_controls_v1.json"
     )
     parser.add_argument("--model", action="append", default=[])
     parser.add_argument("--output", required=True)

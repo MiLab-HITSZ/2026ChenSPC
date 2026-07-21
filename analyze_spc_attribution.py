@@ -255,7 +255,7 @@ def analyze_model(
                 bootstrap,
                 seed + task_index * 100 + 10,
             ),
-            "h_eb_cprc": policy_summary(
+            "h_eb_spc": policy_summary(
                 task_rows, task_heb, bootstrap, seed + task_index * 100 + 20
             ),
             "lambda_sweep": {
@@ -314,7 +314,7 @@ def main() -> int:
     count = int(round((args.lambda_stop - args.lambda_start) / args.lambda_step))
     lambdas = [args.lambda_start + index * args.lambda_step for index in range(count + 1)]
     output = {
-        "version": "cprc_candidate_attribution_v1",
+        "version": "spc_candidate_attribution_v1",
         "interpretation": (
             "The no-image candidate distribution is the language/world-prior "
             "estimator established by REVIS; this analysis attributes gains "
@@ -341,7 +341,7 @@ def main() -> int:
     print("model\ttask\tpolicy\tCF\tdCF\tCS\tdCS\tCF_repairs/harms\tCS_repairs/harms")
     for label, model in output["models"].items():
         for task, policies in model["policies"].items():
-            for policy in ("native_generation", "image_candidate_lambda_0", "h_eb_cprc"):
+            for policy in ("native_generation", "image_candidate_lambda_0", "h_eb_spc"):
                 summary = policies[policy]["by_side"]
                 cf = summary["counterfactual"]
                 cs = summary["commonsense"]

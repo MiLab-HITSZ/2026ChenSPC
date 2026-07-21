@@ -1,5 +1,5 @@
 {
-  "version": "cprc_external_v1",
+  "version": "spc_external_v1",
   "frozen_at_utc": "2026-07-14",
   "model": {
     "name": "Qwen3-VL-32B-Instruct",
@@ -29,7 +29,7 @@
     "dataset_sha256": "cf360e31641b52dd8d49787f89477824d70981f63dc0af264adab8e49a670410",
     "selection_sha256": "f7e5649cce0731ef8139c42581d9a8a9255e9b5627e253f37b4a098ebf8298e1",
     "image_preprocessing": "model_native for baseline generation and candidate scoring",
-    "baseline_provenance": "The exact BF16 baseline generations stored by the official REVIS run are reused by EB-CPRC.",
+    "baseline_provenance": "The exact BF16 baseline generations stored by the official REVIS run are reused by EB-SPC.",
     "eb_cprc": {
       "raw_score_shards": [
         "result/hallusionbench_qa_transfer_full_32b_bf16_native_candidate_scores/shard0.jsonl",
@@ -113,7 +113,7 @@
     "source_revision": "36d9df448f6377511960745e95f9298db292e280",
     "official_repository": "https://github.com/xyliu-cs/ConflictVIS",
     "official_repository_commit": "34567635933a3be59ff03fa13f3991da33a7b4f8",
-    "selection": "All 374 official YN rows and 374 official MC rows. Open-ended SUBJ rows were excluded before inference because EB-CPRC requires a finite native candidate set.",
+    "selection": "All 374 official YN rows and 374 official MC rows. Open-ended SUBJ rows were excluded before inference because EB-SPC requires a finite native candidate set.",
     "response_blind_selection": true,
     "external_labels_used_for_fit_or_selection": false,
     "concepts": 374,
@@ -162,10 +162,10 @@
     "hallusionbench_eb_analysis": "python analyze_hierarchical_eb_lambda_cv.py --input dev_mc:mc=result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl --input dev_qa:qa=result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl --input hallusion_full:qa=result/hallusionbench_qa_transfer_full_32b_bf16_native_candidate_scores/shard0.jsonl --input hallusion_full:qa=result/hallusionbench_qa_transfer_full_32b_bf16_native_candidate_scores/shard1.jsonl --output result/cprc_external/hallusionbench_full_cdh_frozen_bf16_native_v1.json --mode frozen_transfer --train-label dev_mc --train-label dev_qa --max-cs-drop 0.20 --selection-objective net_utility --cs-cost 0.5 --quadrature-points 64 --bootstrap 10000 --seed 20260714",
     "pope_collection_shard_0": "CUDA_VISIBLE_DEVICES=0,1,2,3 python evaluate_pope_native.py --dataset data/pope_native/pope_native.jsonl --models configs/qwen_32b_instruct_bf16_fair.json --output result/pope_native_qwen32b_bf16/shard0.jsonl --shard-index 0 --shard-count 2",
     "pope_collection_shard_1": "CUDA_VISIBLE_DEVICES=4,5,6,7 python evaluate_pope_native.py --dataset data/pope_native/pope_native.jsonl --models configs/qwen_32b_instruct_bf16_fair.json --output result/pope_native_qwen32b_bf16/shard1.jsonl --shard-index 1 --shard-count 2",
-    "pope_analysis": "python analyze_pope_native_cprc.py --pope result/pope_native_qwen32b_bf16/shard0.jsonl --pope result/pope_native_qwen32b_bf16/shard1.jsonl --dev-mc result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl --dev-qa result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl --output result/cprc_external/pope_native_full_cdh_frozen_bf16_v1.json --bootstrap 10000 --seed 20260714",
+    "pope_analysis": "python analyze_pope_native_spc.py --pope result/pope_native_qwen32b_bf16/shard0.jsonl --pope result/pope_native_qwen32b_bf16/shard1.jsonl --dev-mc result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl --dev-qa result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl --output result/cprc_external/pope_native_full_cdh_frozen_bf16_v1.json --bootstrap 10000 --seed 20260714",
     "conflictvis_prepare": "python prepare_conflictvis_transfer.py --dataset xiaoyuanliu/conflict_vis --split train --output-dir data/conflictvis_transfer",
     "conflictvis_score_shard_0": "CUDA_VISIBLE_DEVICES=0,1,2,3 python evaluate_conflictvis_candidate_scores.py --dataset data/conflictvis_transfer/conflictvis_candidate_complete.jsonl --models configs/qwen_32b_instruct_bf16_fair.json --output result/cprc_external/conflictvis_full_bf16_shard0.jsonl --shard-index 0 --shard-count 2 --retry 2",
     "conflictvis_score_shard_1": "CUDA_VISIBLE_DEVICES=4,5,6,7 python evaluate_conflictvis_candidate_scores.py --dataset data/conflictvis_transfer/conflictvis_candidate_complete.jsonl --models configs/qwen_32b_instruct_bf16_fair.json --output result/cprc_external/conflictvis_full_bf16_shard1.jsonl --shard-index 1 --shard-count 2 --retry 2",
-    "conflictvis_analysis": "python analyze_conflictvis_cprc.py --target result/cprc_external/conflictvis_full_bf16_shard0.jsonl --target result/cprc_external/conflictvis_full_bf16_shard1.jsonl --dev-mc result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl --dev-qa result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl --pai-mc-selection result/baseline_sweeps/pai_dev70_mc_32b_instruct.json --pai-qa-selection result/baseline_sweeps/pai_dev70_qa_32b_instruct.json --output result/cprc_external/conflictvis_full_frozen_bf16_v1.json --bootstrap 10000 --seed 20260715"
+    "conflictvis_analysis": "python analyze_conflictvis_spc.py --target result/cprc_external/conflictvis_full_bf16_shard0.jsonl --target result/cprc_external/conflictvis_full_bf16_shard1.jsonl --dev-mc result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl --dev-qa result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl --pai-mc-selection result/baseline_sweeps/pai_dev70_mc_32b_instruct.json --pai-qa-selection result/baseline_sweeps/pai_dev70_qa_32b_instruct.json --output result/cprc_external/conflictvis_full_frozen_bf16_v1.json --bootstrap 10000 --seed 20260715"
   }
 }

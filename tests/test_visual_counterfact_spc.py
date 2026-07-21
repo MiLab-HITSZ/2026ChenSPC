@@ -1,4 +1,4 @@
-from analyze_visual_counterfact_cprc import holm_adjust, mechanism_diagnostic
+from analyze_visual_counterfact_spc import holm_adjust, mechanism_diagnostic
 
 
 def test_holm_adjust_is_monotone_in_sorted_p_values():

@@ -6,7 +6,7 @@ from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, List, Mapping, Sequence
 
-from analyze_cprc_robustness import (
+from analyze_spc_robustness import (
     compact_trial,
     load_model_rows,
     run_frozen,
@@ -14,7 +14,7 @@ from analyze_cprc_robustness import (
 )
 
 
-VERSION = "cprc_calibration_size_v1"
+VERSION = "spc_calibration_size_v1"
 
 
 def development_pair_order(
@@ -149,7 +149,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description="Measure BPRC sensitivity to the number of calibration pairs."
     )
-    parser.add_argument("--config", default="configs/cprc_calibration_size_v1.json")
+    parser.add_argument("--config", default="configs/spc_calibration_size_v1.json")
     parser.add_argument("--model", action="append", default=[])
     parser.add_argument("--output", required=True)
     args = parser.parse_args()

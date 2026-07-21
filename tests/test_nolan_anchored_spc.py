@@ -4,10 +4,10 @@ import unittest
 import numpy as np
 
 from analyze_hierarchical_eb_lambda_cv import inverse_softplus
-from analyze_nolan_anchored_cprc import nolan_lambda, nolan_predictions
+from analyze_nolan_anchored_spc import nolan_lambda, nolan_predictions
 
 
-class NolanAnchoredCprcTest(unittest.TestCase):
+class NolanAnchoredSpcTest(unittest.TestCase):
     def setUp(self):
         self.row = {
             "cp_vbc": {

@@ -127,7 +127,7 @@ def collect_row(
     source = row["cp_vbc"]
     source_candidates = source.get("candidates") or []
     if not source_candidates:
-        raise ValueError("base CPRC row has no candidates")
+        raise ValueError("base SPC row has no candidates")
     scores_by_mode = {
         mode: _candidate_logprobs_shared_prefix(
             model,
@@ -176,7 +176,7 @@ def collect_row(
         "question": row.get("question"),
         "gt": row["gt"],
         "view_collection": {
-            "score_source": "frozen_cprc_image_scores_plus_same_image_derived_views",
+            "score_source": "frozen_spc_image_scores_plus_same_image_derived_views",
             "base_run": row.get("run"),
             "baseline_key": source.get("baseline_key"),
             "baseline_pred": source.get("baseline_pred"),

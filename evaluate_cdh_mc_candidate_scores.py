@@ -10,7 +10,7 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
-from cprc_vlm_runtime import (
+from spc_vlm_runtime import (
     candidate_key,
     candidate_logprobs_shared_prefix,
     candidate_vlm_inputs,

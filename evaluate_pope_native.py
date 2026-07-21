@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List
 
-from cprc_vlm_runtime import (
+from spc_vlm_runtime import (
     build_candidate_prompt,
     candidate_key,
     candidate_vlm_inputs,

@@ -3,7 +3,7 @@ import copy
 import numpy as np
 
 from analyze_hierarchical_eb_lambda_cv import context_features
-from analyze_cprc_robustness import (
+from analyze_spc_robustness import (
     choose_development_pairs,
     derangement,
     mean_prior_rows,
@@ -12,7 +12,7 @@ from analyze_cprc_robustness import (
     relabel_split,
     shuffled_prior_rows,
 )
-from analyze_pope_native_cprc import binary_metrics, exact_mcnemar, multinomial_bootstrap_ci
+from analyze_pope_native_spc import binary_metrics, exact_mcnemar, multinomial_bootstrap_ci
 
 
 def make_row(pair_id, dataset, task="qa", subcategory="Color", prior=(2.0, -1.0)):

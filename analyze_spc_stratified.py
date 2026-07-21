@@ -84,7 +84,7 @@ def analyze(results_path: Path, heb_path: Path) -> Dict[str, Any]:
                 "by_subcategory": grouped(selected, "subcategory"),
             }
     return {
-        "version": "cprc_stratified_analysis_v1",
+        "version": "spc_stratified_analysis_v1",
         "results": str(results_path),
         "heb_result": str(heb_path),
         "rows": len(rows),
@@ -93,7 +93,7 @@ def analyze(results_path: Path, heb_path: Path) -> Dict[str, Any]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Stratify a frozen H-EB CPRC result.")
+    parser = argparse.ArgumentParser(description="Stratify a frozen H-EB SPC result.")
     parser.add_argument("--results", required=True)
     parser.add_argument("--heb", required=True)
     parser.add_argument("--output", required=True)

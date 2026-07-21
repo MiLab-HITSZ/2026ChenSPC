@@ -1,0 +1,37 @@
+{
+  "version": "cprc_nolan_anchor_v1",
+  "created_at_utc": "2026-07-19",
+  "models": {
+    "Qwen3-VL-32B-Instruct": {
+      "dev_mc": "result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+      "dev_qa": "result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+      "test": "result/cprc_bf16_cpr_unseen/Qwen3-VL-32B-Instruct-BF16/results.jsonl"
+    },
+    "LLaVA-1.6-34B": {
+      "dev_mc": "result/cprc_llava16_34b_dev70/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+      "dev_qa": "result/cprc_llava16_34b_dev70/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+      "test": "result/cprc_llava16_34b_cpr_unseen/LLaVA-1.6-34B-Instruct-transformers/results.jsonl"
+    }
+  },
+  "nolan_beta": 0.8,
+  "cs_budgets": [0.0, 0.02, 0.04, 0.06, 0.10],
+  "selection": {
+    "objective": "mean_delta_CF + 0.5 * mean_delta_CS",
+    "cs_cost": 0.5,
+    "require_nonnegative_cf_per_task": true,
+    "development_labels": ["dev_mc", "dev_qa"],
+    "test_labels": ["test_mc", "test_qa"]
+  },
+  "posterior": {
+    "l2_grid": [0.01, 0.1, 1.0, 10.0],
+    "lambda_caps": [0.8, 1.0, 1.2, 1.5],
+    "quadrature_points": 64
+  },
+  "fairness": {
+    "test_label_use": false,
+    "test_refit": false,
+    "anchor": "Released NoLan dynamic coefficient computed from the native image/no-image complete-answer distributions.",
+    "learned_residual": "Zero-mean Gaussian-regularized latent residual fitted only on the paired 70-pair development split.",
+    "inference_features": "The same 13 image/no-image candidate-distribution statistics as CPRC; no side, category, pair identity, or answer label."
+  }
+}

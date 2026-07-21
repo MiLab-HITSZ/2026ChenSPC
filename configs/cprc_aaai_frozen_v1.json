@@ -1,0 +1,350 @@
+{
+  "version": "cprc_aaai_frozen_v1",
+  "frozen_at_utc": "2026-07-12",
+  "scope_revised_at_utc": "2026-07-13",
+  "paper_scope": "Candidate-complete CDH QA and MC; caption is a causal recoverability boundary and not a claimed accuracy track.",
+  "model_scope": {
+    "primary": "Qwen3-VL-32B-Instruct",
+    "independent_architecture": "llava-hf/llava-v1.6-34b-hf",
+    "excluded": ["Qwen3-VL-32B-Thinking", "InternVL3.5-38B"],
+    "reason": "User-directed Instruct-only scope; LLaVA-1.6-34B supplies the single independent open-weight architecture."
+  },
+  "primary_method": {
+    "name": "Empirical-Bayes Prior-Residual Calibration",
+    "short_name": "EB-CPRC",
+    "family": "empirical_bayes_prior_residual",
+    "selection_objective": "delta_CF + 0.5 * delta_CS",
+    "cs_cost": 0.5,
+    "max_training_cs_drop": 0.2,
+    "l2_grid": [0.01, 0.1, 1.0, 10.0],
+    "lambda_caps": [0.8, 1.0, 1.2, 1.5],
+    "visual_support_grid": [0.5, 0.65, 0.8, 0.9, 0.95, 1.01],
+    "absorption_support_grid": [0.5, 0.65, 0.8, 0.9, 0.95, 1.01],
+    "posterior_margin_grid": [0.0, 0.05, 0.1, 0.2, 0.3],
+    "support_distance_quantiles": [0.9, 0.95, 0.99],
+    "quadrature_points": 64,
+    "gate": "REVIS-style visual-conflict/prior-absorption posterior-support gate with Mahalanobis abstention",
+    "checkpoint_conditioned_calibration": true,
+    "task_labels_used_as_inference_features": false,
+    "subcategory_labels_used_as_inference_features": false
+  },
+  "ablation_methods": [
+    "fixed CPRC",
+    "BayesPath CPRC",
+    "no posterior-support gate",
+    "no Mahalanobis abstention",
+    "100-prompt J-lens diagnostic"
+  ],
+  "data_boundary": {
+    "benchmark_pairs": 300,
+    "benchmark_images": 600,
+    "benchmark_unseen_pairs": 0,
+    "development_split": "cpr_development",
+    "development_pairs": 70,
+    "development_sha256": "6fb394af2822f1d34c38f39c3e5d2ff42cf43a21d76bd91eea9c214235e82613",
+    "primary_blind_split": "cpr_unseen",
+    "primary_blind_pairs": 230,
+    "primary_blind_sha256": "e229adb9725a085ba4bcc6db023bcc6215addc829dce45be4d2e2a6a8ca9bf4c",
+    "strict_sensitivity_split": "mitigation_unseen",
+    "strict_sensitivity_pairs": 226,
+    "strict_sensitivity_sha256": "022c85089843f96987b9f20a24c8de8fed6f894d35cd3e6ca22842ee722d765d",
+    "warning": "The blind sets are mitigation-unseen within a previously evaluated and published benchmark; they are not distribution-unseen."
+  },
+  "development_inputs": {
+    "dev_mc": "result/cp_vbc_32b_allsubcat5_instruct_lam06_abs10/Qwen3-VL-32B-Instruct-transformers/results.jsonl",
+    "dev_qa": "result/cdh_gen_32b_instruct_qa_allsubcat5_cp_vbc_lam06_abs10/Qwen3-VL-32B-Instruct-transformers/results.jsonl"
+  },
+  "blind_collection": {
+    "status": "complete_and_structurally_verified",
+    "raw_output": "result/cprc_paper_cpr_unseen_32b_instruct/Qwen3-VL-32B-Instruct-transformers/results.jsonl",
+    "raw_output_sha256": "df05bd91978fd7bc4aab1eaef78f1d659827960c8d16e68e9fe4923578a7924f",
+    "output": "result/cprc_paper_cpr_unseen_32b_instruct/Qwen3-VL-32B-Instruct-transformers/results.option_repaired.jsonl",
+    "output_sha256": "c441505de44bb0256a629b957d43bf608ddea060bee769393c003cbe6343792f",
+    "expected_rows": 920,
+    "verified_rows": 920,
+    "verified_unique_keys": 920,
+    "verified_pairs": 230,
+    "option_format_repair": {
+      "pair_ids": ["Pair 56", "Pair 59", "Pair 62", "Pair 65", "Pair 66", "Pair 262"],
+      "replacement_rows": 12,
+      "reason": "Published JSONL stored four MC options in one string; the initial run therefore produced one candidate. The parser was repaired and only these structurally invalid rows were recollected before target accuracy analysis.",
+      "replacement_sha256": "f7cab664e869741803735be57862b7b65c549ab7db7f5a42b9bf0236bd836808"
+    },
+    "command": "python evaluate_cdh_bench.py --jsonl CDH-Bench.revised.strict.jsonl --images-root images --output-dir result/cprc_paper_cpr_unseen_32b_instruct --models configs/qwen_32b_instruct_transformers.json --tasks qa,mc --pair-manifest runtime/paper/cdh_exposure_ledger.json --pair-split cpr_unseen --mitigation cp_vbc --cp-vbc-tasks qa,mc --cp-vbc-mode candidate --cp-vbc-lambda 0.6 --cp-vbc-absorption-image-margin-max 10 --cp-vbc-contrast-margin 0.75 --parallel 1 --retry 2"
+  },
+  "frozen_analysis": {
+    "mode": "frozen_transfer",
+    "train_labels": ["dev_mc", "dev_qa"],
+    "evaluation_labels": ["test_mc", "test_qa"],
+    "output": "result/hierarchical_eb_lambda_32b/cprc_instruct_cpr_unseen_frozen_v1.json",
+    "command": "python analyze_hierarchical_eb_lambda_cv.py --input dev_mc:mc=result/cp_vbc_32b_allsubcat5_instruct_lam06_abs10/Qwen3-VL-32B-Instruct-transformers/results.jsonl --input dev_qa:qa=result/cdh_gen_32b_instruct_qa_allsubcat5_cp_vbc_lam06_abs10/Qwen3-VL-32B-Instruct-transformers/results.jsonl --input test_mc:mc=result/cprc_paper_cpr_unseen_32b_instruct/Qwen3-VL-32B-Instruct-transformers/results.option_repaired.jsonl --input test_qa:qa=result/cprc_paper_cpr_unseen_32b_instruct/Qwen3-VL-32B-Instruct-transformers/results.option_repaired.jsonl --output result/hierarchical_eb_lambda_32b/cprc_instruct_cpr_unseen_frozen_v1.json --mode frozen_transfer --train-label dev_mc --train-label dev_qa --max-cs-drop 0.20 --selection-objective net_utility --cs-cost 0.5 --quadrature-points 64 --bootstrap 10000 --seed 20260712"
+  },
+  "precision_sensitivity": {
+    "status": "complete",
+    "model_config": "configs/qwen_32b_instruct_bf16_fair.json",
+    "quantization": "none",
+    "dtype": "bfloat16",
+    "dev_raw": "result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+    "dev_raw_sha256": "4a25899cba13918302bf18e4fdc4e1cf455f997d4ae7109d225acb8f817fe026",
+    "dev_oof": "result/hierarchical_eb_lambda_32b/cprc_instruct_bf16_dev70_oof_v1.json",
+    "dev_oof_sha256": "a2b6877890d313d203397b6b6f233b4e379ab0467841539c40fbbd1d37922666",
+    "blind_raw": "result/cprc_bf16_cpr_unseen/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+    "blind_raw_sha256": "ad389bc5c4f88e9ef73cd093b586b6e5b68f091d01932606bcf5702a9bb4e8fe",
+    "frozen_analysis": "result/hierarchical_eb_lambda_32b/cprc_instruct_bf16_cpr_unseen_frozen_v1.json",
+    "frozen_analysis_sha256": "c9cab15189f34ccd26fe129d1b6c22e44ddd3f2b58a7791c55d443fccd3cc8db",
+    "verified_rows": 920,
+    "verified_unique_keys": 920,
+    "prediction_differences_vs_auto_nf4": 0,
+    "correctness_differences_vs_auto_nf4": 0,
+    "eb_cprc_decision_differences_vs_auto_nf4": 0,
+    "raw_text_differences_vs_auto_nf4": 1,
+    "raw_text_difference_reason": "Pair 222 MC counterfactual has the same parsed prediction and exact candidate scores but a shorter generated rationale under the BF16 config's 64-token cap.",
+    "blind_mc_delta_cf_cs": [0.08260869565217391, -0.008695652173913044],
+    "blind_qa_delta_cf_cs": [0.2391304347826087, -0.043478260869565216],
+    "interpretation": "The frozen blind result is unchanged by replacing the legacy automatic 4-bit NF4 load with explicit unquantized BF16."
+  },
+  "independent_architecture_validation": {
+    "status": "complete",
+    "model": "llava-hf/llava-v1.6-34b-hf",
+    "local_model": "models/llava-v1.6-34b-hf",
+    "dtype": "float16",
+    "quantization": "none",
+    "protocol": "Model-native single-image and no-image candidate distributions; checkpoint-specific EB-CPRC fit on the same 70 development pairs, followed by one frozen transfer to 230 CPR-unseen pairs.",
+    "dev_raw": "result/cprc_llava16_34b_dev70/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+    "dev_raw_sha256": "02fb086fd5f279354e3c50513d4f7a39f0aa97fb1eca8543b5e6b98e1ba01105",
+    "dev_oof": "result/hierarchical_eb_lambda_32b/cprc_llava16_34b_dev70_oof_v1.json",
+    "dev_oof_sha256": "85484335cfd5fc4b2147735de396bca2d457f0fa86b60e895e98792d537bb181",
+    "dev_oof_mc_delta_cf_cs": [0.15714285714285714, -0.02857142857142857],
+    "dev_oof_qa_delta_cf_cs": [0.2571428571428571, -0.07142857142857142],
+    "blind_raw": "result/cprc_llava16_34b_cpr_unseen/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+    "blind_raw_sha256": "2c39db6ea0742753a6f90aa93b0c0722e60b4faf29d51a11ad3f432fc711308c",
+    "blind_analysis": "result/hierarchical_eb_lambda_32b/cprc_llava16_34b_cpr_unseen_frozen_v1.json",
+    "blind_analysis_sha256": "1e4b83bee66b9036c36740df195c4b8ce03f5198f7c48c94d77f4798aa1c7872",
+    "stratified_analysis": "result/hierarchical_eb_lambda_32b/cprc_llava16_34b_cpr_unseen_frozen_v1.stratified.json",
+    "stratified_analysis_sha256": "3dc26060143c044ec88e8f4075e617262c3872cfdca990de056cf631c38ce459",
+    "verified_rows": 920,
+    "verified_unique_keys": 920,
+    "verified_pairs": 230,
+    "candidate_arity_errors": 0,
+    "frozen_fit": {
+      "l2": 1.0,
+      "lambda_cap": 1.2,
+      "visual_support_min": 0.5,
+      "absorption_support_min": 0.5,
+      "posterior_margin_min": 0.0,
+      "support_distance_max": 6.390293466590839
+    },
+    "blind_mc_delta_cf_cs": [0.12608695652173912, -0.021739130434782608],
+    "blind_mc_cf_repairs_harms": [30, 1],
+    "blind_mc_cf_mcnemar_p": 2.9802322387695312e-08,
+    "blind_mc_cf_ci95": [0.08260869565217391, 0.16956521739130434],
+    "blind_qa_delta_cf_cs": [0.3, -0.09130434782608696],
+    "blind_qa_cf_repairs_harms": [71, 2],
+    "blind_qa_cf_mcnemar_p": 5.721707558702799e-19,
+    "blind_qa_cf_ci95": [0.2391304347826087, 0.36086956521739133],
+    "blind_cf_by_supercategory": {
+      "mc": {
+        "counting": 0.15,
+        "attribute": 0.10666666666666667,
+        "relational": 0.12
+      },
+      "qa": {
+        "counting": 0.4375,
+        "attribute": 0.12,
+        "relational": 0.3333333333333333
+      }
+    },
+    "subcategory_direction": {
+      "mc_positive_neutral_negative": [13, 1, 0],
+      "qa_positive_neutral_negative": [13, 0, 1]
+    },
+    "official_revis_comparison": {
+      "parameter_source": "REVIS paper LLaVA-family alpha_visual=1.1",
+      "mc_delta_cf_cs": [-0.013043478260869565, 0.008695652173913044],
+      "qa_delta_cf_cs": [0.14782608695652175, -0.030434782608695653],
+      "interpretation": "Official REVIS gives a useful but uniformly yes-to-no QA direction and no MC gain; EB-CPRC supplies question-conditioned candidate destinations and larger cross-format CF gains."
+    }
+  },
+  "generator_image_source_shift": {
+    "status": "cancelled_out_of_scope",
+    "paper_use": false,
+    "reason": "The paper evaluates the existing published benchmark and does not treat image generation or dataset expansion as a contribution.",
+    "manifest": "data/cdh_generator_shift_z_image_turbo_v1/manifest.json",
+    "manifest_sha256": "077bdf541afa97505363acf0a723c6034d01ecb27a90c84c8447a57e5b8b125c",
+    "generator": "Tongyi-MAI/Z-Image-Turbo",
+    "generator_revision": "f332072aa78be7aecdf3ee76d5c247082da564a6",
+    "pairs": 70,
+    "images": 140,
+    "selection": "five SHA256-ranked cpr_unseen pairs per each of 14 subcategories",
+    "development_pair_overlap": 0,
+    "inference_input": "one generated image plus task-native QA/MC text",
+    "semantic_retention": "response-blind prompt/GT adjudication; both sides valid; minimum three valid pairs per subcategory"
+  },
+  "efficiency_analysis": {
+    "status": "latency_and_call_structure_complete_peak_memory_pending",
+    "artifact": "result/runtime_efficiency/cprc_official_revis_qwen_llava_v1.json",
+    "artifact_sha256": "5d843886e8f8859d0fee641aca531a8c030374879f69e2453d7c016d71b6bfcb",
+    "analysis_code": "analyze_runtime_efficiency.py",
+    "analysis_code_sha256": "e54c12fb5b581c5604f0eb0251c41e8d3cf9d35ad7431960627a0db4daba2bd7",
+    "median_latency_seconds": {
+      "qwen_eb_cprc": {"qa": 1.870, "mc": 3.2535},
+      "qwen_official_revis": {"qa": 2.972, "mc": 2.888},
+      "llava_eb_cprc": {"qa": 14.278, "mc": 21.963},
+      "llava_official_revis": {"qa": 13.799, "mc": 13.9435}
+    },
+    "eb_cprc_calls": "one baseline autoregressive generation plus two teacher-forced forwards per candidate; posterior gate adds zero model forwards",
+    "official_revis_calls": "one baseline and one steered autoregressive generation",
+    "not_measured_in_frozen_logs": ["exact generated tokens per second", "peak GPU memory"]
+  },
+  "frozen_development_fit": {
+    "path": "result/hierarchical_eb_lambda_32b/cprc_instruct_dev70_frozen_v1.json",
+    "sha256": "1a9dcf2f7688829c70a458e1c8c648d12b4f3c07bac8ffbdf56b1342a5d05a57",
+    "l2": 0.01,
+    "lambda_cap": 1.0,
+    "visual_support_min": 0.5,
+    "absorption_support_min": 0.5,
+    "posterior_margin_min": 0.0,
+    "support_distance_max": 6.595485273820804,
+    "note": "Fit and hash were fixed before blind collection completed or blind accuracy was inspected."
+  },
+  "frozen_bayes_path_ablation": {
+    "development_mc_selection": "result/cprc_frozen_transfer_32b_instruct/dev_mc_selection.json",
+    "development_mc_selection_sha256": "9b2a345730260a84b01e9f6d806d49d38a6e1a9ccf8e7d22bdef38a2a262d96c",
+    "development_qa_selection": "result/cprc_frozen_transfer_32b_instruct/dev_qa_selection.json",
+    "development_qa_selection_sha256": "273e7e89b61b35a5cff2cecd4653042cc3c4f2050994f7c1fea1178a11c363b3",
+    "frozen_mc_family": "bayes_path",
+    "frozen_qa_family": "fixed",
+    "qa_output": "result/cprc_frozen_transfer_32b_instruct/qa.json",
+    "mc_output": "result/cprc_frozen_transfer_32b_instruct/mc.json",
+    "qa_command": "python analyze_cp_vbc_frozen_transfer.py --development result/cdh_gen_32b_instruct_qa_allsubcat5_cp_vbc_lam06_abs10/Qwen3-VL-32B-Instruct-transformers/results.jsonl --test result/cprc_paper_cpr_unseen_32b_instruct/Qwen3-VL-32B-Instruct-transformers/results.option_repaired.jsonl --task qa --output result/cprc_frozen_transfer_32b_instruct/qa.json --max-cs-drop 0.20 --selection-objective net_utility --cs-cost 0.5 --path-steps 41 --bootstrap 10000 --seed 20260712",
+    "mc_command": "python analyze_cp_vbc_frozen_transfer.py --development result/cp_vbc_32b_allsubcat5_instruct_lam06_abs10/Qwen3-VL-32B-Instruct-transformers/results.jsonl --test result/cprc_paper_cpr_unseen_32b_instruct/Qwen3-VL-32B-Instruct-transformers/results.option_repaired.jsonl --task mc --output result/cprc_frozen_transfer_32b_instruct/mc.json --max-cs-drop 0.20 --selection-objective net_utility --cs-cost 0.5 --path-steps 41 --bootstrap 10000 --seed 20260712"
+  },
+  "reporting": {
+    "primary_metrics": ["CF_Acc", "CS_Acc", "Gap", "RPD", "CCR"],
+    "paired_uncertainty": "pair bootstrap 95% confidence intervals plus paired permutation or McNemar test",
+    "utility_weights_to_report": [0.25, 0.5, 1.0, 2.0],
+    "efficiency": ["wall-clock latency", "forward-pass count", "peak GPU memory", "tokens per second"],
+    "no_post_test_selection": true
+  },
+  "robustness_protocol": {
+    "config": "configs/cprc_robustness_v1.json",
+    "config_sha256": "a2098286cc76df734ffa3a04e72198b9e06fa947c327b4959f60d00576eff2cb",
+    "prior_controls": {
+      "artifact": "result/cprc_robustness/prior_controls_qwen32b_v1.json",
+      "sha256": "2d76d3be63a462601393b07a8c19c0ae39d62b4ca56cab810469bcd65ef5af23",
+      "stochastic_seeds": 20,
+      "same_fit_and_gate_budget": true,
+      "full_mc_delta_cf_cs_points": [8.26, -0.87],
+      "full_qa_delta_cf_cs_points": [23.91, -4.35],
+      "mean_prior_mc_delta_cf_cs_points": [0.43, 0.00],
+      "mean_prior_qa_delta_cf_cs_points": [20.87, -5.65],
+      "shuffled_prior_mc_mean_std_delta_cf_points": [-0.65, 1.22],
+      "shuffled_prior_qa_mean_std_delta_cf_points": [17.35, 1.89],
+      "permuted_prior_mc_mean_std_delta_cf_points": [-0.67, 0.80],
+      "permuted_prior_qa_mean_std_delta_cf_points": [0.00, 0.00],
+      "image_only_delta_cf_cs_points": [0.00, 0.00, 0.00, 0.00]
+    },
+    "repeated_splits": {
+      "artifact": "result/cprc_robustness/repeated_splits_qwen_llava_v1.json",
+      "sha256": "95a4214b8337f66ef5d703a2c84b3e6cb370d753000810f8119e9b7a2f6a792e",
+      "seeds": 10,
+      "development_pairs_per_subcategory": 5,
+      "qwen_mc_mean_std_delta_cf_cs_points": [7.57, 1.01, -0.83, 1.19],
+      "qwen_qa_mean_std_delta_cf_cs_points": [21.96, 2.53, -2.78, 1.60],
+      "llava_mc_mean_std_delta_cf_cs_points": [9.96, 1.27, -2.09, 0.93],
+      "llava_qa_mean_std_delta_cf_cs_points": [27.26, 2.50, -6.91, 2.06]
+    },
+    "operating_points": {
+      "artifact": "result/cprc_robustness/operating_points_qwen_llava_v1.json",
+      "sha256": "48ee540ce0c83a0a2ce89b5939b52d3082dea5d05527728463ba38794adac836",
+      "cs_safe_development_max_drop": 0.05,
+      "high_repair_development_max_drop": 0.20,
+      "selection_objective": "delta_CF + 0.5 * delta_CS"
+    }
+  },
+  "calibration_size_analysis": {
+    "status": "complete",
+    "config": "configs/cprc_calibration_size_v1.json",
+    "config_sha256": "047c06ade6d9e3a9517b67697fb432e9f094ec036c2529996cf4dcbc0927898d",
+    "analysis_code": "analyze_cprc_calibration_size.py",
+    "analysis_code_sha256": "f1dc8bd963e63902825801febdae687cb5afb8153d05324a5dfb26086b5511f3",
+    "artifact": "result/cprc_robustness/calibration_size_qwen_llava_v1.json",
+    "artifact_sha256": "80c27ce3e42af39f9f686e2d853f518155a74463b03acdbb6235ab9e0b914a4e",
+    "calibration_pairs": [14, 28, 42, 56, 70],
+    "subset_seeds": 5,
+    "qwen_14_pair_mc_qa_delta_cf_cs_points": [5.74, -1.13, 22.00, -3.48],
+    "llava_14_pair_mc_qa_delta_cf_cs_points": [4.61, -1.04, 26.70, -7.04],
+    "interpretation": "Positive mean CF repair is already visible with one pair per subcategory; additional calibration primarily increases and stabilizes MC repair."
+  },
+  "external_evaluation": {
+    "config": "configs/cprc_external_v1.json",
+    "config_sha256": "a840d371b736c0c58f56a70a2185c7aeade65a207bb662f94efbc6a990f1900e",
+    "hallusionbench": {
+      "pairs": 328,
+      "response_blind_selection": true,
+      "eb_cprc_delta_cf_cs_points": [4.88, -2.44],
+      "eb_cprc_cf_repairs_harms": [16, 0],
+      "official_revis_delta_cf_cs_points": [0.61, -0.91],
+      "official_revis_cf_repairs_harms": [6, 4]
+    },
+    "pope": {
+      "questions": 9000,
+      "protocols": ["random", "popular", "adversarial"],
+      "interventions": 0,
+      "delta_accuracy_points": 0.0,
+      "delta_f1_points": 0.0
+    }
+  },
+  "blind_results": {
+    "primary_cpr_unseen": {
+      "result": "result/hierarchical_eb_lambda_32b/cprc_instruct_cpr_unseen_frozen_v1.json",
+      "sha256": "7e7acd573034364ce8cd0ddc559090f920a9fc6cadfe28a56953fa3364d413b5",
+      "mc": {
+        "baseline_cf": 0.6652173913043479,
+        "method_cf": 0.7478260869565218,
+        "delta_cf": 0.08260869565217391,
+        "baseline_cs": 0.9652173913043478,
+        "method_cs": 0.9565217391304348,
+        "delta_cs": -0.008695652173913044,
+        "cf_ci95": [0.0391304347826087, 0.12608695652173912],
+        "cf_mcnemar_p": 0.0005461126565933228
+      },
+      "qa": {
+        "baseline_cf": 0.591304347826087,
+        "method_cf": 0.8304347826086956,
+        "delta_cf": 0.2391304347826087,
+        "baseline_cs": 0.9478260869565217,
+        "method_cs": 0.9043478260869565,
+        "delta_cs": -0.043478260869565216,
+        "cf_ci95": [0.1826086956521739, 0.2956521739130435],
+        "cf_mcnemar_p": 6.144390551909851e-15
+      }
+    },
+    "mitigation_unseen_sensitivity": {
+      "result": "result/hierarchical_eb_lambda_32b/cprc_instruct_mitigation_unseen_frozen_v1.json",
+      "sha256": "26df1123ada9a37fdfe6b33037572a7b22308758c172feceeb5ffcf037f87b90",
+      "mc_delta_cf_cs": [0.084070796460177, -0.008849557522123894],
+      "qa_delta_cf_cs": [0.23893805309734514, -0.04424778761061947]
+    },
+    "frozen_specialist_ablation": {
+      "mc_bayes_path_delta_cf_cs": [0.1, -0.06521739130434782],
+      "qa_bayes_path_delta_cf_cs": [0.25217391304347825, -0.05652173913043478],
+      "qa_fixed_delta_cf_cs": [0.2565217391304348, -0.08260869565217391],
+      "mc_result_sha256": "40b1598c0d1808577d43abbec34c6b04de8e2af141b6a87c33c708827f512f01",
+      "qa_result_sha256": "42a08fc293026433b56f0342d426f7aa0f6d448a860d21c831666151fea3564f"
+    }
+  },
+  "hashes": {
+    "repository_base_git_head": "73bac077a4310bf46a50bfafa4339320ab866964",
+    "benchmark_jsonl": "db129b19da8164611ea3459e71422c6e94f8cc9e445c19f7cafeffda6cbf67ad",
+    "exposure_ledger": "6d7e7aa17a8dd965b52ed8b0227bbf9682420fe20f47996ace2828ed7c9ab0ec",
+    "collection_code": "5874569ffa0ac96a80daccb0742939242de53c1489586c82bc9681f4bec5beab",
+    "option_repair_collection_code": "b5dd31a8f13223bab350d4e084fe245f8793ccb901e956630db696dbb0255fd0",
+    "option_parser_code": "8c64692557cb54d3da6e61e927aaa850598edc70f640cb007b67c3e248f54922",
+    "replacement_merger_code": "4ad0a006518b60a0a58ddd0469008440d0e143abd901d2fed81fd4664dde4dc3",
+    "hierarchical_analysis_code": "1eaf31b3c7d11fb8fafd4c8b6784d6a655e6e36f24a0d78115d6ccf517fbadf9",
+    "bayes_path_analysis_code": "029b97f847ca60e36e25aee93d3ba43db1f931d9c2532f0a7734649f6aa7450f",
+    "robustness_analysis_code": "72e664b1b0d4597ac18131f5d5c64f73353def6f517eb18858893cc25a846c92",
+    "frozen_bayes_path_analysis_code": "48529e09a9ce1d8ac8bcdf5cba50a1c9b68c91fe807663711031f74a1890a842"
+  }
+}

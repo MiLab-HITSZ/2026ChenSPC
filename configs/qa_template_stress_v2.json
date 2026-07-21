@@ -1,0 +1,84 @@
+{
+  "version": "qa_template_stress_v2",
+  "frozen_at_utc": "2026-07-15",
+  "construction_manifest": "data/qa_template_stress_v2/manifest.json",
+  "development_template": "contrastive",
+  "unseen_test_templates": ["instead", "choice", "reject_second"],
+  "split": {
+    "manifest": "runtime/paper/cdh_exposure_ledger.json",
+    "development": "cpr_development",
+    "development_pairs": 70,
+    "test": "cpr_unseen",
+    "test_pairs": 230,
+    "pair_overlap": 0
+  },
+  "models": {
+    "Qwen3-VL-32B-Instruct": {
+      "model_config": "configs/qwen_32b_instruct_bf16_answer1.json",
+      "pai_gamma": 1.5,
+      "selection_analysis": "result/qa_polarity_stress/qwen_balanced_fit.json",
+      "train_cs_first": "result/qa_polarity_stress/qwen_cs_first_dev/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+      "train_cf_first": "result/qa_polarity_stress/qwen_cf_first_dev/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+      "templates": {
+        "contrastive": {
+          "cs_first": "result/qa_polarity_stress/qwen_cs_first_test/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+          "cf_first": "result/qa_polarity_stress/qwen_cf_first_test/Qwen3-VL-32B-Instruct-BF16/results.jsonl"
+        },
+        "instead": {
+          "cs_first": "result/qa_template_stress_v2/qwen_instead_cs_first_test/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+          "cf_first": "result/qa_template_stress_v2/qwen_instead_cf_first_test/Qwen3-VL-32B-Instruct-BF16/results.jsonl"
+        },
+        "choice": {
+          "cs_first": "result/qa_template_stress_v2/qwen_choice_cs_first_test/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+          "cf_first": "result/qa_template_stress_v2/qwen_choice_cf_first_test/Qwen3-VL-32B-Instruct-BF16/results.jsonl"
+        },
+        "reject_second": {
+          "cs_first": "result/qa_template_stress_v2/qwen_reject_second_cs_first_test/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+          "cf_first": "result/qa_template_stress_v2/qwen_reject_second_cf_first_test/Qwen3-VL-32B-Instruct-BF16/results.jsonl"
+        }
+      }
+    },
+    "LLaVA-1.6-34B": {
+      "model_config": "configs/llava16_34b_instruct_transformers_answer1.json",
+      "pai_gamma": 2.0,
+      "selection_analysis": "result/qa_polarity_stress/llava_balanced_fit.json",
+      "train_cs_first": "result/qa_polarity_stress/llava_cs_first_dev/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+      "train_cf_first": "result/qa_polarity_stress/llava_cf_first_dev/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+      "templates": {
+        "contrastive": {
+          "cs_first": "result/qa_polarity_stress/llava_cs_first_test/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+          "cf_first": "result/qa_polarity_stress/llava_cf_first_test/LLaVA-1.6-34B-Instruct-transformers/results.jsonl"
+        },
+        "instead": {
+          "cs_first": "result/qa_template_stress_v2/llava_instead_cs_first_test/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+          "cf_first": "result/qa_template_stress_v2/llava_instead_cf_first_test/LLaVA-1.6-34B-Instruct-transformers/results.jsonl"
+        },
+        "choice": {
+          "cs_first": "result/qa_template_stress_v2/llava_choice_cs_first_test/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+          "cf_first": "result/qa_template_stress_v2/llava_choice_cf_first_test/LLaVA-1.6-34B-Instruct-transformers/results.jsonl"
+        },
+        "reject_second": {
+          "cs_first": "result/qa_template_stress_v2/llava_reject_second_cs_first_test/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+          "cf_first": "result/qa_template_stress_v2/llava_reject_second_cf_first_test/LLaVA-1.6-34B-Instruct-transformers/results.jsonl"
+        }
+      }
+    }
+  },
+  "collection": {
+    "task": "qa",
+    "mitigation": "cp_vbc",
+    "candidate_mode": true,
+    "collection_lambda": 0.6,
+    "contrast_margin": 0.75,
+    "absorption_image_margin_max": 10.0,
+    "temperature": 0.0,
+    "max_answer_tokens": 1,
+    "single_test_image": true
+  },
+  "evaluation": {
+    "fit": "The frozen balanced-fit BPRC policy is learned only from both answer orders of the contrastive template on 70 development pairs.",
+    "transfer": "The same fit and gate are applied to all four 230-pair test templates; no unseen-template development examples or test labels are used.",
+    "controls": "PAI keeps the gamma selected on the native 70-pair development split. Identity, always-yes, always-no, and inversion are selected only on the contrastive development forms, then frozen across templates.",
+    "metrics": ["CF accuracy", "CS accuracy", "complement consistency", "joint-pair accuracy", "no-image-prior complement consistency"]
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "version": "cprc_robustness_v1",
+  "frozen_at_utc": "2026-07-14",
+  "models": {
+    "Qwen3-VL-32B-Instruct": {
+      "dev_mc": "result/cp_vbc_32b_allsubcat5_instruct_lam06_abs10/Qwen3-VL-32B-Instruct-transformers/results.jsonl",
+      "dev_qa": "result/cdh_gen_32b_instruct_qa_allsubcat5_cp_vbc_lam06_abs10/Qwen3-VL-32B-Instruct-transformers/results.jsonl",
+      "test": "result/cprc_paper_cpr_unseen_32b_instruct/Qwen3-VL-32B-Instruct-transformers/results.option_repaired.jsonl"
+    },
+    "LLaVA-1.6-34B": {
+      "dev_mc": "result/cprc_llava16_34b_dev70/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+      "dev_qa": "result/cprc_llava16_34b_dev70/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+      "test": "result/cprc_llava16_34b_cpr_unseen/LLaVA-1.6-34B-Instruct-transformers/results.jsonl"
+    }
+  },
+  "prior_control_models": [
+    "Qwen3-VL-32B-Instruct"
+  ],
+  "development_pairs_per_subcategory": 5,
+  "fit": {
+    "selection_objective": "delta_CF + 0.5 * delta_CS",
+    "max_cs_drop": 0.2,
+    "cs_cost": 0.5,
+    "quadrature_points": 64,
+    "bootstrap": 2000,
+    "l2_grid": [0.01, 0.1, 1.0, 10.0],
+    "lambda_caps": [0.8, 1.0, 1.2, 1.5],
+    "visual_support_grid": [0.5, 0.65, 0.8, 0.9, 0.95, 1.01],
+    "absorption_support_grid": [0.5, 0.65, 0.8, 0.9, 0.95, 1.01],
+    "posterior_margin_grid": [0.0, 0.05, 0.1, 0.2, 0.3],
+    "support_distance_quantiles": [0.9, 0.95, 0.99]
+  },
+  "seeds": {
+    "fit": 20260714,
+    "prior_controls": [
+      2026071401,
+      2026071402,
+      2026071403,
+      2026071404,
+      2026071405,
+      2026071406,
+      2026071407,
+      2026071408,
+      2026071409,
+      2026071410,
+      2026071411,
+      2026071412,
+      2026071413,
+      2026071414,
+      2026071415,
+      2026071416,
+      2026071417,
+      2026071418,
+      2026071419,
+      2026071420
+    ],
+    "repeated_splits": [
+      2026071501,
+      2026071502,
+      2026071503,
+      2026071504,
+      2026071505,
+      2026071506,
+      2026071507,
+      2026071508,
+      2026071509,
+      2026071510
+    ]
+  },
+  "fairness": {
+    "split_selection": "Pair metadata only; both image sides and both tasks remain grouped.",
+    "prior_controls": "Same EB dimensionality, fit grid, gate grid, development labels, and CS constraint for every control.",
+    "test_label_use": false,
+    "subcategory_as_inference_feature": false,
+    "task_as_inference_feature": false
+  }
+}

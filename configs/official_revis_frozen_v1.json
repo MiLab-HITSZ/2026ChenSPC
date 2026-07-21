@@ -1,0 +1,264 @@
+{
+  "name": "official-revis-frozen-v1",
+  "repository": "https://github.com/antgroup/Revis",
+  "commit": "75f4d29d402d4c1c4dbb2c69e88e3aa50cd0c9cc",
+  "local_snapshot": "downloads/hallucination_refs/REVIS",
+  "scope": {
+    "primary_model": "models/Qwen3-VL-32B-Instruct",
+    "additional_model": "models/llava-v1.6-34b-hf",
+    "excluded_models": ["Qwen3-VL-32B-Thinking", "InternVL3.5-38B"]
+  },
+  "official_parameters": {
+    "paper_alpha_visual": {
+      "qwen_family": 1.6,
+      "llava_family": 1.1
+    },
+    "repository_entry_default_alpha_visual": 2.5,
+    "risk_gamma": 1.0,
+    "calibration_percentile": 85,
+    "calibration_max_samples": 300,
+    "minimum_decoder_layer": 10,
+    "extraction_samples": 100,
+    "layer": "selected by the official backward-search rule",
+    "tau_low": "85th percentile of factual risk at the selected layer"
+  },
+  "fidelity": {
+    "vector_equation": "official PCA plus Gram-Schmidt prior orthogonalization",
+    "risk_equation": "negative cosine similarity to the orthogonal visual vector",
+    "gate": "risk > tau_low",
+    "intervention": "h <- h + alpha_visual * visual_vector",
+    "adapter_reason": "The released Qwen3 branch is marked TODO and does not move its templated inputs to the model device. The local adapter changes model I/O only and imports the pinned official PCA and hook implementations."
+  },
+  "qwen3vl32b": {
+    "vector_file": "result/official_revis/qwen3vl32b_vectors_official100.pt",
+    "vector_sha256": "37d0a468c0b543b414231179fcde9e913dccdc3541b180f61316f55bf150f039",
+    "calibration_file": "result/official_revis/qwen3vl32b_calibration_official300_p85.json",
+    "calibration_sha256": "a95c1c494e380bacbcbb36c22314d24eed653028e981859cd82b78ce3df9b210",
+    "selected_layer": 46,
+    "vector_index": 47,
+    "tau_low": -0.2177734375,
+    "calibration_separability": 0.00063929354636591,
+    "calibration_factual": 285,
+    "calibration_false_positive": 7,
+    "vector_jspace_diagnostic": {
+      "analysis": "result/official_revis/qwen3vl32b_vector47_jspace.json",
+      "analysis_sha256": "392eaac16d4c09daa2508cfff6ee0bf5ba2287f29c194bf205633a1c21ed207a",
+      "code": "analyze_official_revis_vector_jspace.py",
+      "code_sha256": "3f819836954d239526ea71b18e3238c5a0874007cf4ffd61125d1f1245ea0fb9",
+      "readout": "static final RMSNorm plus unembedding; no later-block transport",
+      "used_for_inference": false,
+      "yes_minus_no": {
+        "lowercase_no_space": 0.5192997455596924,
+        "lowercase_space": 3.1732842922210693,
+        "capitalized_no_space": 3.6174209117889404,
+        "capitalized_space": 5.36151385307312
+      },
+      "all_vector_scan": {
+        "decoder_state_vectors": 64,
+        "positive_yes_direction": 49,
+        "negative_yes_direction": 15,
+        "median_mean_yes_minus_no": 2.1202563047409058,
+        "selected_mean_yes_minus_no": 3.1678797006607056,
+        "selected_rank_descending_including_embedding_state": 28
+      }
+    },
+    "development": {
+      "scores": "result/official_revis/qwen3vl32b_dev70_official/Qwen3-VL-32B-Instruct-official-revis/results.jsonl",
+      "scores_sha256": "8a4e8856c10af40cd796be94920ef8ab2b5f20a2e9cf801ca850031ab305fc7f",
+      "analysis": "result/official_revis/qwen3vl32b_dev70_official_analysis.json",
+      "rows": 280,
+      "pairs": 70,
+      "mc_delta_cf_cs": [-0.014285714285714285, 0.014285714285714285],
+      "qa_delta_cf_cs": [-0.02857142857142857, 0.0]
+    },
+    "blind": {
+      "status": "complete",
+      "parameter_source": "repository entry default alpha_visual=2.5; retained as sensitivity rather than the paper-parameter main row",
+      "scores": "result/official_revis/qwen3vl32b_cpr_unseen_official/Qwen3-VL-32B-Instruct-official-revis/results.jsonl",
+      "scores_sha256": "3dc44cdd6db701dd802dfe2cede1dc681ec1fe8ba7046aa26a8d2a416f58357d",
+      "analysis": "result/official_revis/qwen3vl32b_cpr_unseen_official_analysis.json",
+      "analysis_sha256": "9dc56a8f0b990a2e8e84e645f2bdd76deec7eda3fe1c64d6565f2c7b03031f8b",
+      "rows": 920,
+      "pairs": 230,
+      "mc_delta_cf_cs": [-0.021739130434782608, 0.0],
+      "mc_cf_repairs_harms": [0, 5],
+      "mc_cf_mcnemar_p": 0.0625,
+      "qa_delta_cf_cs": [-0.030434782608695653, -0.004347826086956522],
+      "qa_cf_repairs_harms": [3, 10],
+      "qa_cf_answer_transitions": {
+        "no_to_yes": 10,
+        "yes_to_no": 3
+      },
+      "qa_cf_mcnemar_p": 0.09228515625,
+      "all_rows_gate_activated": true,
+      "hidden_position_trigger_rate": {
+        "mc_cf": 0.31509287243167844,
+        "mc_cs": 0.31614427102548887,
+        "qa_cf": 0.3155680975529373,
+        "qa_cs": 0.314579375316813
+      }
+    },
+    "paper_parameter_blind": {
+      "status": "complete",
+      "parameter_source": "REVIS paper Qwen-family alpha_visual=1.6; all other vector, calibration, layer, threshold, and risk settings unchanged",
+      "scores": "result/official_revis/qwen3vl32b_cpr_unseen_paper_alpha16/Qwen3-VL-32B-Instruct-official-revis-paper-alpha16/results.jsonl",
+      "scores_sha256": "93a621b88dce8d88b2bfb67d81fee46a3b70f4e73598719e48fe7316bd62d755",
+      "analysis": "result/official_revis/qwen3vl32b_cpr_unseen_official_alpha16_analysis.json",
+      "analysis_sha256": "96a3fc1f2778894bb639097bbc80fe33a3a66a53f4d64cd189f41f4a2b97c940",
+      "rows": 920,
+      "pairs": 230,
+      "mc_delta_cf_cs": [-0.013043478260869565, 0.0],
+      "mc_cf_repairs_harms": [0, 3],
+      "mc_cf_mcnemar_p": 0.25,
+      "qa_delta_cf_cs": [-0.021739130434782608, -0.004347826086956522],
+      "qa_cf_repairs_harms": [2, 7],
+      "qa_cf_answer_transitions": {
+        "no_to_yes": 7,
+        "yes_to_no": 2
+      },
+      "qa_cf_mcnemar_p": 0.1796875,
+      "all_rows_gate_activated": true,
+      "hidden_position_trigger_rate": {
+        "mc_cf": 0.3151509561088296,
+        "mc_cs": 0.3161512854449926,
+        "qa_cf": 0.31562400853739436,
+        "qa_cs": 0.3147181542318095
+      }
+    },
+    "paired_external_transfer": {
+      "protocol": "Same frozen Qwen3-VL-32B BF16 vector, calibration, alpha_visual=2.5, and risk_gamma=1.0; no external labels used for fitting.",
+      "scope_warning": "These are prepared 70-pair transfer subsets, not complete official benchmark leaderboard runs.",
+      "popev2": {
+        "scores": "result/official_revis/qwen3vl32b_popev2_official/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+        "scores_sha256": "0c89647a06fdd1d1106b1b608a3aae3716ce1d86e4a89aa7b18a1df977d80427",
+        "analysis": "result/official_revis/qwen3vl32b_popev2_official_analysis.json",
+        "analysis_sha256": "4838f953f2261638ca2d56c4efc90c22e815f84d296487949c4ce5ead62621f3",
+        "pairs": 70,
+        "counterfactual_delta": -0.014285714285714285,
+        "commonsense_delta": 0.014285714285714285,
+        "counterfactual_repairs_harms": [0, 1],
+        "commonsense_repairs_harms": [1, 0]
+      },
+      "hallusionbench": {
+        "scores": "result/official_revis/qwen3vl32b_hallusionbench_official/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+        "scores_sha256": "81ec8f45e43f1afbd830b842cb75497a42ef1d7c22ffee08f31148d96a2b9791",
+        "analysis": "result/official_revis/qwen3vl32b_hallusionbench_official_analysis.json",
+        "analysis_sha256": "9d80ddd411b7b4fa161fb1ccac318a00c8502b787dac46b10f5ca7eb79081d01",
+        "pairs": 70,
+        "counterfactual_delta": -0.014285714285714285,
+        "commonsense_delta": -0.014285714285714285,
+        "counterfactual_repairs_harms": [0, 1],
+        "commonsense_repairs_harms": [0, 1]
+      }
+    }
+  },
+  "llava16_34b": {
+    "model": "models/llava-v1.6-34b-hf",
+    "family": "llava_next",
+    "dtype": "float16",
+    "vector_file": "result/official_revis/llava16_34b_vectors_official100.pt",
+    "vector_sha256": "0654639d03a8940992a39beead185784d20b219ab88850749df9f4cd3ebddd94",
+    "calibration_file": "result/official_revis/llava16_34b_calibration_official300_p85.json",
+    "calibration_sha256": "29112093cc327870f857e66c11bc2250557f3a1c01dea682b1ae0ae091c171b8",
+    "selected_layer": 56,
+    "vector_index": 57,
+    "tau_low": -0.1068267822265625,
+    "calibration_separability": 0.003924674365348185,
+    "calibration_factual": 286,
+    "calibration_false_positive": 6,
+    "development": {
+      "status": "complete",
+      "scores": "result/official_revis/llava16_34b_dev70_official/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+      "scores_sha256": "561b8d03839f31b16139b0af67994d622e3777ccb009873e6dcaeaf74e537771",
+      "analysis": "result/official_revis/llava16_34b_dev70_official_analysis.json",
+      "analysis_sha256": "84ed7851c3d94f32cc5464913521bee06fd538c512701b07351fa9b6f4e2638d",
+      "rows": 280,
+      "pairs": 70,
+      "mc_delta_cf_cs": [-0.11428571428571428, -0.1],
+      "qa_delta_cf_cs": [0.22857142857142856, -0.24285714285714285],
+      "mc_empty_steered_answers": 40,
+      "hidden_position_trigger_rate": {
+        "mc_cf": 0.9736705468067888,
+        "mc_cs": 0.9736426371773045,
+        "qa_cf": 0.9701180350034838,
+        "qa_cs": 0.9740788665879575
+      },
+      "safety_gate_passed": false,
+      "safety_gate_reason": "The official setting exceeds the accepted CS degradation on both tasks; QA trades +22.86 pp CF for -24.29 pp CS."
+    },
+    "blind": {
+      "status": "complete",
+      "parameter_source": "repository entry default alpha_visual=2.5; retained as sensitivity rather than the paper-parameter result",
+      "selection_policy": "Official REVIS is an external frozen baseline, so the blind result is reported despite failing the development safety gate; no blind labels were used to tune it.",
+      "scores": "result/official_revis/llava16_34b_cpr_unseen_official/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+      "scores_sha256": "f5ae2bbf76b41dc933536779db184c5fe7953138b7e8c44b28abb9ece40f2d05",
+      "analysis": "result/official_revis/llava16_34b_cpr_unseen_official_analysis.json",
+      "analysis_sha256": "62ec8e775d7412b157ff5e480cac2272a5deab97435e581eb2b876c230cf224d",
+      "rows": 920,
+      "pairs": 230,
+      "mc_delta_cf_cs": [-0.16521739130434782, -0.13478260869565217],
+      "mc_cf_repairs_harms": [0, 38],
+      "mc_cf_mcnemar_p": 7.275957614183426e-12,
+      "mc_empty_steered_answers": 109,
+      "qa_delta_cf_cs": [0.33043478260869563, -0.23043478260869565],
+      "qa_cf_repairs_harms": [78, 2],
+      "qa_cs_repairs_harms": [2, 55],
+      "qa_cf_mcnemar_p": 5.3617847305687254e-21,
+      "qa_answer_transitions": {
+        "counterfactual_yes_to_no": 80,
+        "commonsense_yes_to_no": 57
+      },
+      "all_rows_gate_activated": true,
+      "hidden_position_trigger_rate": {
+        "mc_cf": 0.9734393978273886,
+        "mc_cs": 0.9701810782607042,
+        "qa_cf": 0.9710605004791323,
+        "qa_cs": 0.9705605012430156
+      }
+    },
+    "paper_parameter_blind": {
+      "status": "complete",
+      "parameter_source": "REVIS paper LLaVA-family alpha_visual=1.1; all vector, calibration, layer, threshold, and risk settings unchanged",
+      "scores": "result/official_revis/llava16_34b_cpr_unseen_paper_alpha11/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+      "scores_sha256": "9da834f781cfd3f7f742cfae6e320f75adec62acdfbe9ac08f3afe09042d0bbc",
+      "analysis": "result/official_revis/llava16_34b_cpr_unseen_official_alpha11_analysis.json",
+      "analysis_sha256": "a8ef8c235e3b926cf6f6e54a27360c2bae159a5b5d839ff2c56d86f4822fecf3",
+      "rows": 920,
+      "pairs": 230,
+      "mc_delta_cf_cs": [-0.013043478260869565, 0.008695652173913044],
+      "mc_cf_repairs_harms": [0, 3],
+      "mc_cs_repairs_harms": [3, 1],
+      "mc_cf_mcnemar_p": 0.25,
+      "qa_delta_cf_cs": [0.14782608695652175, -0.030434782608695653],
+      "qa_cf_repairs_harms": [35, 1],
+      "qa_cs_repairs_harms": [0, 7],
+      "qa_cf_mcnemar_p": 1.076841726899147e-09,
+      "qa_answer_transitions": {
+        "counterfactual_yes_to_no": 36,
+        "commonsense_yes_to_no": 7
+      },
+      "all_rows_gate_activated": true,
+      "hidden_position_trigger_rate": {
+        "mc_cf": 0.9724510378724168,
+        "mc_cs": 0.969667224667344,
+        "qa_cf": 0.9689468088006762,
+        "qa_cs": 0.9690120388402923
+      },
+      "empty_steered_answers": 0,
+      "generation_protocol": {
+        "decoding": "greedy",
+        "first_588_rows_max_new_tokens": 64,
+        "remaining_332_rows_max_new_tokens": 1,
+        "prefix_audit": "All 920 parsed QA/MC answers occur in the first generated token; greedy first-token logits are invariant to max_new_tokens.",
+        "answer1_config": "configs/llava16_34b_instruct_transformers_answer1.json",
+        "answer1_config_sha256": "862d96842369c110fd18c1d4f87ba1851763b7e75e4d317ae2cd414d798db648"
+      }
+    }
+  },
+  "reporting_policy": {
+    "main_table_revis": "Qwen paper_parameter_blind (alpha_visual=1.6)",
+    "llava_revis_status": "paper_parameter_blind complete at alpha_visual=1.1; repository-default alpha_visual=2.5 retained as sensitivity",
+    "legacy_candidate_revis": "supplementary diagnostic only",
+    "parameter_sweeps": "sensitivity appendix only; never replace the frozen official row"
+  }
+}

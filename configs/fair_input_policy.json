@@ -1,0 +1,210 @@
+{
+  "version": "fair_input_policy_v1",
+  "date": "2026-07-01",
+  "global_inference_rules": {
+    "single_image_only": true,
+    "paired_reference_image_allowed": false,
+    "cf_cs_label_allowed": false,
+    "pair_metadata_allowed": false,
+    "ground_truth_allowed": false,
+    "evaluation_claim_fields_allowed": false,
+    "cross_track_inputs_allowed": false
+  },
+  "tracks": {
+    "qa": {
+      "allowed_inputs": ["image", "qa_question"],
+      "forbidden_inputs": [
+        "mc_question",
+        "mc_options",
+        "caption_prompt",
+        "gt_answer",
+        "gt_caption",
+        "critical_claim",
+        "prior_claim",
+        "shared_claims",
+        "forbidden_claims",
+        "subcategory",
+        "pair_id_semantics",
+        "cf_cs_label",
+        "paired_reference_image"
+      ]
+    },
+    "mc": {
+      "allowed_inputs": ["image", "mc_question", "mc_options"],
+      "forbidden_inputs": [
+        "qa_question",
+        "caption_prompt",
+        "gt_answer",
+        "gt_option",
+        "gt_caption",
+        "critical_claim",
+        "prior_claim",
+        "shared_claims",
+        "forbidden_claims",
+        "subcategory",
+        "pair_id_semantics",
+        "cf_cs_label",
+        "paired_reference_image"
+      ]
+    },
+    "caption": {
+      "allowed_inputs": ["image", "caption_prompt"],
+      "allowed_derived_internal_state": [
+        "self_generated_visual_claims_from_image_and_caption_prompt",
+        "self_generated_candidate_claims_from_caption_prompt",
+        "image_text_prior_scores_over_self_generated_candidates",
+        "single_image_derived_crops_or_tiles_for_internal_audit",
+        "single_image_derived_grid_overlay_for_internal_audit",
+        "single_image_derived_cv_contour_for_internal_audit",
+        "single_image_derived_relation_crops_for_internal_audit",
+        "single_image_derived_segments_or_keypoints_for_internal_audit",
+        "task_native_risk_family_prediction",
+        "task_native_relation_or_asymmetry_audit",
+        "self_generated_risk_scores_from_image_and_caption_prompt",
+        "decoder_state_from_image_and_caption_prompt",
+        "image_conditioned_logits_from_caption_prompt",
+        "no_image_prior_logits_from_caption_prompt",
+        "single_image_degraded_prior_logits_from_caption_prompt",
+        "image_no_image_hidden_delta_from_caption_prompt",
+        "image_degraded_hidden_delta_from_caption_prompt",
+        "orthogonal_visual_residual_from_image_no_image_hidden_states",
+        "orthogonal_visual_residual_from_image_degraded_hidden_states",
+        "prior_logit_advantage_from_no_image_or_degraded_view",
+        "jacobian_lens_or_logit_lens_readouts_from_caption_prompt",
+        "workspace_layer_prior_concepts_from_model_internal_state",
+        "prior_token_embedding_subspace_from_prior_source_topk",
+        "final_hidden_prior_token_subspace_suppression",
+        "layerwise_prior_token_subspace_suppression",
+        "decoder_self_attention_prior_residual_from_prior_source",
+        "layerwise_attention_prior_residual_suppression",
+        "headwise_attention_prior_residual_suppression",
+        "headwise_attention_visual_delta_boost",
+        "pre_softmax_image_token_attention_reallocation",
+        "pre_softmax_text_route_attention_suppression",
+        "jspace_prior_concept_suppression",
+        "jspace_visual_residual_injection",
+        "latent_steered_logits_from_caption_prompt",
+        "layerwise_hidden_residual_injection_from_image_no_image_hidden_states",
+        "decoder_visual_attention_to_image_tokens"
+      ],
+      "forbidden_inputs": [
+        "qa_question",
+        "qa_answer",
+        "mc_question",
+        "mc_options",
+        "mc_predictions",
+        "gt_caption",
+        "critical_claim",
+        "prior_claim",
+        "shared_claims",
+        "forbidden_claims",
+        "subcategory",
+        "pair_id_semantics",
+        "cf_cs_label",
+        "paired_reference_image"
+      ]
+    },
+    "external_hallucination_benchmark": {
+      "allowed_inputs": ["image", "benchmark_native_prompt", "benchmark_native_options_if_any"],
+      "forbidden_inputs": [
+        "cdh_subcategory",
+        "cdh_claim_fields",
+        "cdh_gt_answer",
+        "cdh_pair_metadata",
+        "extra_reference_image",
+        "cross_track_predictions"
+      ]
+    }
+  },
+  "calibration_and_analysis": {
+    "subcategory_allowed_for_stratified_reporting": true,
+    "subcategory_allowed_for_heldout_empirical_bayes_calibration": true,
+    "subcategory_allowed_for_final_test_inference": false,
+    "final_test_gate_rule": "A gate may use only task-native inputs at inference. If benchmark subcategory labels are used to switch a method on/off, report it as oracle_or_analysis_only rather than fair.",
+    "text_only_judge_allowed_fields": [
+      "focus_question",
+      "gt_text",
+      "critical_claim",
+      "prior_claim",
+      "shared_claims",
+      "forbidden_claims",
+      "model_output",
+      "synonym_hints"
+    ],
+    "text_only_judge_image_allowed": false
+  },
+    "known_method_status": {
+    "prompt_grounding": {
+      "qa": "fair",
+      "mc": "fair",
+      "caption": "fair"
+    },
+    "visual_evidence": {
+      "qa": "fair",
+      "mc": "fair",
+      "caption": "fair"
+    },
+    "vcd": {
+      "qa": "fair",
+      "mc": "fair",
+      "caption": "not_implemented"
+    },
+    "pai": {
+      "qa": "fair_finite_candidate_cfg_adaptation",
+      "mc": "fair_finite_candidate_cfg_adaptation",
+      "caption": "not_implemented"
+    },
+    "mfcd": {
+      "qa": "fair",
+      "mc": "fair",
+      "caption": "not_implemented"
+    },
+    "revis": {
+      "qa": "fair",
+      "mc": "fair",
+      "caption": "fair"
+    },
+    "cdh_revis_prior_residual": {
+      "qa": "fair",
+      "mc": "fair",
+      "caption": "fair",
+      "external_hallucination_benchmark": "planned_fair_if_uses_only_benchmark_native_prompt_image_and_model_internal_state"
+    },
+    "cp_vbc_candidate": {
+      "qa": "fair",
+      "mc": "fair",
+      "caption": "not_applicable"
+    },
+    "option_entailment": {
+      "mc": "fair",
+      "qa": "limited",
+      "caption": "not_applicable"
+    },
+    "raw_token_cp_vbc": {
+      "caption": "fair_but_rejected_in_current_pilot"
+    },
+    "claim_bridge_from_mc": {
+      "caption": "diagnostic_upper_bound_not_fair",
+      "reason": "uses MC-derived candidate information"
+    },
+    "token_prefix_from_mc": {
+      "caption": "diagnostic_upper_bound_not_fair",
+      "reason": "uses MC-derived candidate information"
+    },
+    "visual_claim_proposer": {
+      "caption": "fair_if_claims_are_self_generated_from_image_and_caption_prompt_only"
+    },
+    "prior_claim_bayes": {
+      "caption": "fair_if_prior_claims_are_text_only_from_caption_prompt_and_visual_evidence_uses_only_same_image_caption_prompt",
+      "qa": "planned_fair_if_prior_claims_are_text_only_from_qa_question_and_visual_evidence_uses_only_same_image_qa_question",
+      "mc": "planned_fair_if_prior_claims_are_text_only_from_mc_question_options_and_visual_evidence_uses_only_same_image_mc_question_options",
+      "external_hallucination_benchmark": "planned_fair_if_uses_only_benchmark_native_inputs"
+    },
+    "visual_proposal_families": {
+      "caption": "fair_if_each_family_uses_only_image_caption_prompt_and_same_image_derived_state",
+      "qa": "fair_if_each_family_uses_only_image_qa_question_and_same_image_derived_state",
+      "mc": "fair_if_each_family_uses_only_image_mc_question_options_and_same_image_derived_state",
+      "external_hallucination_benchmark": "fair_if_each_family_uses_only_benchmark_native_inputs_and_same_image_derived_state"
+    }
+  }
+}

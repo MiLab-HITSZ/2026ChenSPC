@@ -1,0 +1,47 @@
+{
+  "version": "bprc_mc_option_permutation_v1",
+  "frozen_at_utc": "2026-07-15",
+  "permutation_manifest": "data/mc_option_permutation_v1/manifest.json",
+  "models": {
+    "Qwen3-VL-32B-Instruct": {
+      "dev_mc": "result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+      "dev_qa": "result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+      "original_test": "result/cprc_bf16_cpr_unseen/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+      "permuted_tests": {
+        "rotate_1": "result/mc_option_permutation_v1/qwen_rotate_1/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+        "rotate_2": "result/mc_option_permutation_v1/qwen_rotate_2/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+        "reverse": "result/mc_option_permutation_v1/qwen_reverse/Qwen3-VL-32B-Instruct-BF16/results.jsonl"
+      }
+    },
+    "LLaVA-1.6-34B": {
+      "dev_mc": "result/cprc_llava16_34b_dev70/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+      "dev_qa": "result/cprc_llava16_34b_dev70/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+      "original_test": "result/cprc_llava16_34b_cpr_unseen/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+      "permuted_tests": {
+        "rotate_1": "result/mc_option_permutation_v1/llava_rotate_1/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+        "rotate_2": "result/mc_option_permutation_v1/llava_rotate_2/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+        "reverse": "result/mc_option_permutation_v1/llava_reverse/LLaVA-1.6-34B-Instruct-transformers/results.jsonl"
+      }
+    }
+  },
+  "cs_budgets": [0.04, 0.10],
+  "selection": {
+    "objective": "mean_delta_CF + 0.5 * mean_delta_CS",
+    "cs_cost": 0.5,
+    "require_nonnegative_cf_per_task": true
+  },
+  "posterior": {
+    "l2_grid": [0.01, 0.1, 1.0, 10.0],
+    "lambda_caps": [0.8, 1.0, 1.2, 1.5],
+    "quadrature_points": 64
+  },
+  "direct_gate": {
+    "fixed_lambdas": [0.1, 0.2, 0.3, 0.5, 0.8, 1.0, 1.2, 1.5],
+    "l2_grid": [0.01, 0.1, 1.0, 10.0]
+  },
+  "fairness": {
+    "calibration": "The same original-order 70-pair development set selects every method for every test order.",
+    "intervention": "Every option moves position; answer letters are remapped while image, question, option semantics, and pair membership remain unchanged.",
+    "inference": "Each row uses one image and its displayed candidate set only."
+  }
+}

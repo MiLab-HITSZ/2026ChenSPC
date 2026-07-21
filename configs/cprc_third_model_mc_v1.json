@@ -1,0 +1,45 @@
+{
+  "version": "cprc_third_model_mc_v1",
+  "frozen_at_utc": "2026-07-16",
+  "models": {
+    "Qwen3-VL-30B-A3B-Instruct": {
+      "tasks": ["mc"],
+      "dev_mc": "result/cprc_qwen30b_a3b_dev70/Qwen3-VL-30B-A3B-Instruct-BF16/results.jsonl",
+      "test_mc": "result/cprc_qwen30b_a3b_cpr_unseen/Qwen3-VL-30B-A3B-Instruct-BF16/results.jsonl"
+    }
+  },
+  "point_map": {
+    "l2_grid": [0.01, 0.1, 1.0, 10.0],
+    "lambda_caps": [0.8, 1.0, 1.2, 1.5],
+    "quadrature_points": 64
+  },
+  "paired_cs_budget": 0.04,
+  "paired_cs_cost": 0.5,
+  "require_nonnegative_cf_per_task": true,
+  "variants": {
+    "paired_calibration": {
+      "fit_rows": "CF+CS",
+      "selection_rows": "CF+CS",
+      "objective": "delta_CF + 0.5 * delta_CS",
+      "cs_constraint": "delta_CS >= -0.04 for MC"
+    },
+    "cf_only_data": {
+      "fit_rows": "CF only",
+      "selection_rows": "CF only",
+      "objective": "delta_CF",
+      "cs_constraint": "none"
+    },
+    "paired_fit_cf_objective": {
+      "fit_rows": "CF+CS",
+      "selection_rows": "CF only",
+      "objective": "delta_CF",
+      "cs_constraint": "none"
+    }
+  },
+  "fairness": {
+    "candidate_scores": "Identical frozen image/no-image scores for every variant.",
+    "method_family": "Point-MAP candidate-aligned residual without Laplace integration or density gating.",
+    "parameter_grid": "Identical l2, lambda-cap, and gate grids for every variant.",
+    "test_label_use": false
+  }
+}

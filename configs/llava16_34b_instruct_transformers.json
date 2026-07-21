@@ -1,0 +1,12 @@
+[
+  {
+    "name": "LLaVA-1.6-34B-Instruct-transformers",
+    "backend": "transformers",
+    "model": "llava-v1.6-34b-hf",
+    "models_root": "models",
+    "temperature": 0,
+    "max_tokens": 64,
+    "quantization": "none",
+    "dtype": "float16"
+  }
+]

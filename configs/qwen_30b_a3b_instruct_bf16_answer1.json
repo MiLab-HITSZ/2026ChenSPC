@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Qwen3-VL-30B-A3B-Instruct-BF16",
+    "backend": "transformers",
+    "model": "Qwen3-VL-30B-A3B-Instruct",
+    "models_root": "models",
+    "temperature": 0.0,
+    "max_tokens": 1,
+    "quantization": "none",
+    "dtype": "bfloat16"
+  }
+]

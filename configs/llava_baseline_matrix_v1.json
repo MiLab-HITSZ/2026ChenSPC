@@ -1,0 +1,153 @@
+{
+  "version": "llava_baseline_matrix_v1",
+  "frozen_at_utc": "2026-07-15",
+  "model": {
+    "name": "LLaVA-1.6-34B-Instruct",
+    "config": "configs/llava16_34b_instruct_transformers.json",
+    "checkpoint": "models/llava-v1.6-34b-hf",
+    "dtype": "float16",
+    "quantization": "none"
+  },
+  "split": {
+    "pair_manifest": "runtime/paper/cdh_exposure_ledger.json",
+    "development": "cpr_development",
+    "development_pairs": 70,
+    "test": "cpr_unseen",
+    "test_pairs": 230,
+    "no_test_refit": true
+  },
+  "selection": {
+    "objective": "delta_CF + 0.5 * delta_CS",
+    "max_development_cs_drop": 0.04,
+    "protocol": "configs/strong_baselines_frozen_v1.json"
+  },
+  "baselines": {
+    "prompt_grounding": {
+      "status": "complete",
+      "parameters": {},
+      "selection": "fixed prompt; no development tuning",
+      "inference": {
+        "backend": "vLLM 0.18.0",
+        "checkpoint": "models/llava-v1.6-34b-hf",
+        "temperature": 0.0,
+        "transformers_parity_audit": {
+          "overlap_rows": 9,
+          "exact_prediction_matches": 9,
+          "exact_correctness_matches": 9
+        }
+      },
+      "test_artifacts": {
+        "mc_raw": "result/prompt_grounding_cpr_unseen_llava16_34b_mc_vllm/LLaVA-1.6-34B-Instruct-vLLM/results.jsonl",
+        "mc_analysis": "result/baseline_frozen_transfer/prompt_grounding_cpr_unseen_mc_llava16_34b.json",
+        "mc_delta_cf_cs": [-0.12608695652173912, 0.030434782608695653],
+        "qa_raw": "result/prompt_grounding_cpr_unseen_llava16_34b_qa_vllm/LLaVA-1.6-34B-Instruct-vLLM/results.jsonl",
+        "qa_analysis": "result/baseline_frozen_transfer/prompt_grounding_cpr_unseen_qa_llava16_34b.json",
+        "qa_delta_cf_cs": [-0.13043478260869565, 0.021739130434782608]
+      }
+    },
+    "vcd_candidate": {
+      "status": "development_and_test_complete",
+      "score": "(1+alpha)*logp_image-alpha*logp_degraded",
+      "alpha": [0.5, 1.0, 1.5, 2.0],
+      "beta": [0.0, 0.1, 0.3],
+      "degrade_mode": ["blur_downsample", "blur", "downsample"],
+      "gate": ["always", "visual_conflict"],
+      "contrast_margin": [0.0, 0.25, 0.75],
+      "development_selection": {
+        "mc": {
+          "artifact": "result/baseline_sweeps/vcd_dev70_mc_llava16_34b.json",
+          "params": {"alpha": 2.0, "beta": 0.0, "contrast_margin": 0.25, "degrade_mode": "blur", "gate": "always"},
+          "delta_cf_cs": [0.1, -0.014285714285714235]
+        },
+        "qa": {
+          "artifact": "result/baseline_sweeps/vcd_dev70_qa_llava16_34b.json",
+          "params": {"alpha": 1.5, "beta": 0.3, "contrast_margin": 0.0, "degrade_mode": "blur_downsample", "gate": "always"},
+          "delta_cf_cs": [0.014285714285714235, 0.014285714285714235]
+        }
+      },
+      "test_artifacts": {
+        "mc_analysis": "result/baseline_frozen_transfer/vcd_cpr_unseen_mc_llava16_34b.json",
+        "mc_delta_cf_cs": [-0.021739130434782608, -0.02608695652173913],
+        "qa_analysis": "result/baseline_frozen_transfer/vcd_cpr_unseen_qa_llava16_34b.json",
+        "qa_delta_cf_cs": [-0.021739130434782608, -0.004347826086956522]
+      }
+    },
+    "mfcd_candidate": {
+      "status": "development_and_test_complete",
+      "score": "(1+alpha_low+alpha_high)*logp_image-alpha_low*logp_low-alpha_high*logp_high",
+      "alpha_low": [0.5, 1.0, 1.5],
+      "alpha_high": [0.5, 1.0, 1.5],
+      "beta": [0.0, 0.1, 0.3],
+      "low_mode": ["blur_downsample", "blur"],
+      "high_mode": ["high_pass", "edges"],
+      "gate": ["always", "visual_conflict", "frequency_conflict"],
+      "contrast_margin": [0.0, 0.25, 0.75],
+      "development_selection": {
+        "mc": {
+          "artifact": "result/baseline_sweeps/mfcd_dev70_mc_llava16_34b.json",
+          "params": {"alpha_high": 0.5, "alpha_low": 0.5, "beta": 0.0, "contrast_margin": 0.0, "gate": "always", "high_mode": "high_pass", "low_mode": "blur_downsample"},
+          "delta_cf_cs": [0.08571428571428569, 0.0]
+        },
+        "qa": {
+          "artifact": "result/baseline_sweeps/mfcd_dev70_qa_llava16_34b.json",
+          "params": {"alpha_high": 1.5, "alpha_low": 1.5, "beta": 0.3, "contrast_margin": 0.0, "gate": "always", "high_mode": "high_pass", "low_mode": "blur_downsample"},
+          "delta_cf_cs": [0.05714285714285716, 0.014285714285714235]
+        }
+      },
+      "test_artifacts": {
+        "mc_analysis": "result/baseline_frozen_transfer/mfcd_cpr_unseen_mc_llava16_34b.json",
+        "mc_delta_cf_cs": [0.02608695652173913, -0.004347826086956522],
+        "qa_analysis": "result/baseline_frozen_transfer/mfcd_cpr_unseen_qa_llava16_34b.json",
+        "qa_delta_cf_cs": [0.05217391304347826, -0.008695652173913044]
+      }
+    },
+    "pai_candidate": {
+      "status": "complete",
+      "source": "configs/strong_baselines_frozen_v1.json"
+    },
+    "nolan_candidate": {
+      "status": "released_score_rule_complete",
+      "beta": 0.8,
+      "mc_analysis": "result/baseline_frozen_transfer/nolan_cpr_unseen_mc_llava34b.json",
+      "mc_delta_cf_cs": [0.0782608695652174, 0.004347826086956522],
+      "qa_analysis": "result/baseline_frozen_transfer/nolan_cpr_unseen_qa_llava34b.json",
+      "qa_delta_cf_cs": [0.26956521739130435, -0.06086956521739131]
+    },
+    "official_revis": {
+      "status": "complete",
+      "alpha_visual": 1.1,
+      "source": "configs/official_revis_frozen_v1.json"
+    },
+    "eb_cprc": {
+      "status": "complete",
+      "source": "configs/cprc_aaai_frozen_v1.json"
+    }
+  },
+  "score_reuse": {
+    "base_image_and_native_answer": "result/cprc_llava16_34b_dev70/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+    "development_view_shards": [
+      "result/candidate_view_scores/llava16_34b_dev70_shard0.jsonl",
+      "result/candidate_view_scores/llava16_34b_dev70_shard1.jsonl"
+    ],
+    "test_task_views": {
+      "mc": {
+        "path": "result/candidate_view_scores/llava16_34b_cpr_unseen_mc.jsonl",
+        "views": ["blur", "blur_downsample", "high_pass"]
+      },
+      "qa": {
+        "path": "result/candidate_view_scores/llava16_34b_cpr_unseen_qa.jsonl",
+        "views": ["blur_downsample", "high_pass"]
+      }
+    },
+    "rule": "The frozen CPRC logs supply the identical native answer and image-conditioned candidate likelihoods. New forwards score only deterministic views derived from the same test image. VCD and MFCD retain their published score algebra and full predeclared grids; PAI and NoLan replay their published image/text-only score rules."
+  },
+  "fairness": {
+    "single_image_only": true,
+    "paired_reference_at_inference": false,
+    "subcategory_at_inference": false,
+    "ground_truth_at_inference": false,
+    "test_labels_for_selection": false
+  },
+  "complete_matrix": "result/baseline_frozen_transfer/llava16_34b_complete_baseline_matrix_v1.json",
+  "complete_matrix_sha256": "883fe8e39facb00e0c28a029ed0ee68ada9421110c6cc7b92f864a8a486c0447"
+}

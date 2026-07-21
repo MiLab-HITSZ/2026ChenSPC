@@ -1,0 +1,132 @@
+{
+  "version": "qa_polarity_stress_v1",
+  "frozen_at_utc": "2026-07-15",
+  "status": "complete",
+  "question_construction": {
+    "manifest": "data/qa_polarity_stress_v1/manifest.json",
+    "cs_first": "data/qa_polarity_stress_v1/cs_first.jsonl",
+    "cf_first": "data/qa_polarity_stress_v1/cf_first.jsonl",
+    "template": "For the visual question Q, is the correct answer FIRST rather than SECOND?",
+    "balance": "For every image, cs_first and cf_first have complementary yes/no labels; each side is exactly balanced when the variants are combined.",
+    "manual_subcategory_rules": false,
+    "anchor_source_counts": {"native_mc_options": 299, "caption_gt_fallback_for_invalid_mc_pair": 1}
+  },
+  "split": {
+    "manifest": "runtime/paper/cdh_exposure_ledger.json",
+    "development": "cpr_development",
+    "development_pairs": 70,
+    "test": "cpr_unseen",
+    "test_pairs": 230,
+    "pair_overlap": 0
+  },
+  "models": {
+    "Qwen3-VL-32B-Instruct": {
+      "config": "configs/qwen_32b_instruct_bf16_answer1.json",
+      "original_dev_mc": "result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+      "original_dev_qa": "result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+      "native_test_raw": "result/cprc_bf16_cpr_unseen/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+      "native_test_analysis": "result/hierarchical_eb_lambda_32b/cprc_instruct_bf16_cpr_unseen_frozen_v1.json",
+      "native_mc_only_to_qa_analysis": "result/qa_polarity_stress/qwen_mc_only_to_native_qa.json",
+      "collections": {
+        "dev_cs_first": "result/qa_polarity_stress/qwen_cs_first_dev/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+        "dev_cf_first": "result/qa_polarity_stress/qwen_cf_first_dev/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+        "test_cs_first": "result/qa_polarity_stress/qwen_cs_first_test/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+        "test_cf_first": "result/qa_polarity_stress/qwen_cf_first_test/Qwen3-VL-32B-Instruct-BF16/results.jsonl"
+      }
+    },
+    "LLaVA-1.6-34B": {
+      "config": "configs/llava16_34b_instruct_transformers_answer1.json",
+      "original_dev_mc": "result/cprc_llava16_34b_dev70/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+      "original_dev_qa": "result/cprc_llava16_34b_dev70/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+      "native_test_raw": "result/cprc_llava16_34b_cpr_unseen/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+      "native_test_analysis": "result/hierarchical_eb_lambda_32b/cprc_llava16_34b_cpr_unseen_frozen_v1.json",
+      "native_mc_only_to_qa_analysis": "result/qa_polarity_stress/llava_mc_only_to_native_qa.json",
+      "collections": {
+        "dev_cs_first": "result/qa_polarity_stress/llava_cs_first_dev/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+        "dev_cf_first": "result/qa_polarity_stress/llava_cf_first_dev/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+        "test_cs_first": "result/qa_polarity_stress/llava_cs_first_test/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+        "test_cf_first": "result/qa_polarity_stress/llava_cf_first_test/LLaVA-1.6-34B-Instruct-transformers/results.jsonl"
+      }
+    }
+  },
+  "collection": {
+    "task": "qa",
+    "mitigation": "cp_vbc",
+    "cp_vbc_tasks": "qa",
+    "cp_vbc_mode": "candidate",
+    "cp_vbc_lambda": 0.6,
+    "cp_vbc_absorption_image_margin_max": 10.0,
+    "cp_vbc_contrast_margin": 0.75,
+    "temperature": 0.0,
+    "max_answer_tokens": 1,
+    "single_test_image": true
+  },
+  "analyses": {
+    "original_fit_transfer": {
+      "training": "The previously frozen native MC+QA 70-pair calibration only.",
+      "selection_objective": "delta_CF + 0.5 * delta_CS",
+      "max_cs_drop_per_training_dataset": 0.2,
+      "test_refit": false
+    },
+    "balanced_fit": {
+      "training": "Both complementary QA variants from the 70 development pairs.",
+      "selection_objective": "delta_CF + 0.5 * delta_CS summed over both directions",
+      "max_cs_drop_per_direction": 0.2,
+      "test_refit": false
+    },
+    "mc_only_fit": {
+      "training": "The original native MC rows from the 70 development pairs only.",
+      "purpose": "Answer-position-balanced cross-format control; tests whether removing native QA polarity is sufficient without balanced QA score geometry.",
+      "max_cs_drop_per_training_dataset": 0.2,
+      "test_refit": false
+    },
+    "direction_only_control": {
+      "policies": ["identity", "always_yes", "always_no", "invert"],
+      "selection": "Same development utility and per-direction CF/CS constraints."
+    },
+    "frozen_pai_control": {
+      "qwen_gamma": 1.5,
+      "llava_gamma": 2.0,
+      "beta": 0.1,
+      "selection": "Coefficients selected on the original 70-pair native QA development split; replayed without target refit."
+    }
+  },
+  "primary_metrics": [
+    "CF accuracy and delta by direction",
+    "CS accuracy and delta by direction",
+    "complement consistency across the paired questions",
+    "joint-pair accuracy where both complementary questions are correct",
+    "native, image-score, and no-image-prior complement consistency"
+  ],
+  "result_artifacts": {
+    "Qwen3-VL-32B-Instruct": {
+      "original_fit": "result/qa_polarity_stress/qwen_original_fit.json",
+      "mc_only_fit": "result/qa_polarity_stress/qwen_mc_only_fit.json",
+      "balanced_fit": "result/qa_polarity_stress/qwen_balanced_fit.json",
+      "analysis": "result/qa_polarity_stress/qwen_qa_polarity_stress_analysis_v1.json",
+      "analysis_sha256": "0b4f1b948b7b5c8aaeb220486fb670239b48baf959485c36fbbde8c48a9abdc7",
+      "original_fit_delta_cf": {"cs_first": 0.3782608695652174, "cf_first": 0.043478260869565216},
+      "balanced_fit_delta_cf": {"cs_first": 0.36086956521739133, "cf_first": 0.11739130434782609},
+      "balanced_fit_delta_cs": {"cs_first": -0.02608695652173913, "cf_first": -0.030434782608695653},
+      "baseline_to_balanced_cf_joint_accuracy": [0.44782608695652176, 0.7652173913043478],
+      "baseline_to_balanced_cf_complement_consistency": [0.7608695652173914, 0.9173913043478261],
+      "no_image_prior_complement_consistency": 0.5826086956521739,
+      "cf_first_no_image_normal_answer_rate": 0.5739130434782609
+    },
+    "LLaVA-1.6-34B": {
+      "original_fit": "result/qa_polarity_stress/llava_original_fit.json",
+      "mc_only_fit": "result/qa_polarity_stress/llava_mc_only_fit.json",
+      "balanced_fit": "result/qa_polarity_stress/llava_balanced_fit.json",
+      "analysis": "result/qa_polarity_stress/llava_qa_polarity_stress_analysis_v1.json",
+      "analysis_sha256": "34c423ddf85e1954b89f33c6cf4abf604989e59cd1d1fe8b9208a09f9518f77f",
+      "original_fit_delta_cf": {"cs_first": 0.33043478260869563, "cf_first": -0.017391304347826087},
+      "balanced_fit_delta_cf": {"cs_first": 0.4652173913043478, "cf_first": -0.013043478260869565},
+      "balanced_fit_delta_cs": {"cs_first": -0.1, "cf_first": 0.043478260869565216},
+      "baseline_to_original_cf_joint_accuracy": [0.30434782608695654, 0.5826086956521739],
+      "baseline_to_original_cf_complement_consistency": [0.6, 0.8434782608695652],
+      "no_image_prior_complement_consistency": 0.47391304347826085,
+      "cf_first_no_image_normal_answer_rate": 0.4652173913043478,
+      "directional_criterion_passed": false
+    }
+  }
+}

@@ -1,0 +1,13 @@
+# Versions used for the reported Qwen3-VL-32B and LLaVA-1.6-34B experiments.
+accelerate==1.13.0
+matplotlib==3.10.8
+numpy==2.2.6
+Pillow==12.1.1
+pyarrow==25.0.0
+pytest==9.0.2
+qwen-vl-utils==0.0.14
+scikit-learn==1.9.0
+scipy==1.18.0
+torch==2.10.0
+torchvision==0.25.0
+transformers==4.57.6

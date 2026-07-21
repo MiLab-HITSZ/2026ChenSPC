@@ -1,0 +1,29 @@
+.venv/
+venv/
+models/
+downloads/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*.log
+*.pid
+*.out
+.DS_Store
+
+# Benchmark data, images, and frozen score files are produced/downloaded
+# locally and are not tracked (see README "Data").
+data/
+images/
+result/
+runtime/
+
+# LaTeX build intermediates and compiled PDFs.
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.toc
+*.synctex.gz
+paper/**/*.pdf
+!paper/**/figures/*.pdf

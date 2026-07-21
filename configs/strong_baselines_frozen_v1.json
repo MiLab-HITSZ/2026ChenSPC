@@ -1,0 +1,397 @@
+{
+  "version": "strong_baselines_protocol_v1",
+  "created_at_utc": "2026-07-12",
+  "status": "protocol_frozen_before_development_sweeps",
+  "scope": ["qa", "mc"],
+  "single_image_only": true,
+  "development_split": {
+    "name": "cpr_development",
+    "pairs": 70,
+    "sha256": "6fb394af2822f1d34c38f39c3e5d2ff42cf43a21d76bd91eea9c214235e82613"
+  },
+  "blind_split": {
+    "name": "cpr_unseen",
+    "pairs": 230,
+    "sha256": "e229adb9725a085ba4bcc6db023bcc6215addc829dce45be4d2e2a6a8ca9bf4c"
+  },
+  "selection": {
+    "primary_utility": "delta_CF + 0.5 * delta_CS",
+    "max_development_cs_drop": 0.04,
+    "tie_breakers": ["higher_delta_CF", "higher_delta_CS", "lower_forward_pass_count", "lexicographic_parameter_order"],
+    "report_utility_weights": [0.25, 0.5, 1.0, 2.0],
+    "no_blind_refit": true
+  },
+  "reference_snapshots": {
+    "vcd": {
+      "repo": "https://github.com/DAMO-NLP-SG/VCD",
+      "commit": "d6568ff81b8fd306a49e630df44f2db5c2300191"
+    },
+    "opera": {
+      "repo": "https://github.com/shikiw/OPERA",
+      "commit": "e1bb7632508bdfaa5cdaf5b69b64419688107da8"
+    },
+    "pai": {
+      "repo": "https://github.com/LALBJ/PAI",
+      "commit": "9bbd8bd57a0b0923f996197e4bd3e02cc10b8d58"
+    },
+    "halc": {
+      "repo": "https://github.com/BillChan226/HALC",
+      "commit": "c757ced4f1f26d992e6e7200a44d3b899bb000af"
+    },
+    "mfcd": {
+      "repo": "https://github.com/liubq-dev/mfcd",
+      "commit": "a5cd8de499aa9056171a8c8fc208eda2d3261e13"
+    },
+    "nolan": {
+      "paper": "https://arxiv.org/abs/2602.22144",
+      "repo": "https://github.com/lingfengren/NoLan",
+      "commit": "8b6d92589d8e2608f49eb7c4bca211a8c1495723"
+    },
+    "revis": {
+      "paper": "https://arxiv.org/abs/2602.11824v2",
+      "repo": "https://github.com/antgroup/Revis",
+      "commit": "75f4d29d402d4c1c4dbb2c69e88e3aa50cd0c9cc",
+      "local_snapshot": "downloads/hallucination_refs/REVIS",
+      "code_status": "official_snapshot_acquired_after_candidate_blind_evaluation",
+      "audit": {
+        "turnkey_model_paths": ["Qwen2.5-VL", "LLaVA-1.5", "LLaVA-1.6/LLaVA-NeXT"],
+        "paper_only_or_partial_paths": ["Qwen3-VL", "InternVL3", "InternVL3.5"],
+        "qwen3_vector_path_contains_todo": true,
+        "repository_extraction_examples": 100,
+        "repository_calibration_max_samples": 300,
+        "repository_qwen_calibration_percentile": 85.0,
+        "repository_run_defaults": {
+          "layer": 27,
+          "alpha_visual": 2.5,
+          "tau_low": 0.2,
+          "risk_gamma": 1.0
+        },
+        "paper_qwen2_5_vl_7b_reported_alpha": 1.6,
+        "paper_qwen2_5_vl_32b_selected_layer": 62,
+        "default_discrepancy_requires_explicit_configuration": true
+      }
+    }
+  },
+  "baselines": {
+    "prompt_grounding": {
+      "status": "blind_complete_fixed_no_tuning",
+      "mitigation": "prompt_grounding",
+      "parameters": {},
+      "blind_artifact": {
+        "scores": "result/prompt_grounding_cpr_unseen_32b_instruct/Qwen3-VL-32B-Instruct-transformers/results.jsonl",
+        "scores_sha256": "aa42e5ba17264044b3a955c9015d98a1219d32729b3a194281c1a40f420278a8",
+        "qa_result": "result/baseline_frozen_transfer/prompt_grounding_cpr_unseen_qa_32b_instruct.json",
+        "qa_result_sha256": "92df1fdc66c1fca51211a3cc52ea7e7646ede9ec123913f16b42364972ab246a",
+        "qa_delta_cf_cs": [0.08695652173913043, -0.004347826086956522],
+        "qa_cf_mcnemar_p": 1.0967254638671875e-05,
+        "mc_result": "result/baseline_frozen_transfer/prompt_grounding_cpr_unseen_mc_32b_instruct.json",
+        "mc_result_sha256": "ecdccc682471dab17d76169f8e5e67b8192331a573b2ce13b10b1bd4dca09a43",
+        "mc_delta_cf_cs": [-0.008695652173913044, 0.004347826086956522],
+        "mc_cf_mcnemar_p": 0.79052734375
+      }
+    },
+    "vcd_candidate": {
+      "status": "development_and_blind_complete",
+      "mitigation": "vcd",
+      "score": "(1+alpha)*logp_image-alpha*logp_degraded",
+      "grid": {
+        "alpha": [0.5, 1.0, 1.5, 2.0],
+        "beta": [0.0, 0.1, 0.3],
+        "degrade_mode": ["blur_downsample", "blur", "downsample"],
+        "gate": ["always", "visual_conflict"],
+        "contrast_margin": [0.0, 0.25, 0.75]
+      },
+      "development_blur_downsample_artifact": {
+        "scores": "result/vcd_candidate_dev70_32b_instruct_officialscore/Qwen3-VL-32B-Instruct-transformers/results.jsonl",
+        "scores_sha256": "912c0702fac261e04d2bcf41b1853861c0a0e809649d5ebbf3de0d2b7ddd4f1b",
+        "verified_rows": 280,
+        "verified_pairs": 70,
+        "qa_selection": "result/baseline_sweeps/vcd_dev70_qa_32b_instruct.json",
+        "qa_selection_sha256": "f77627f8eb92ae9a316b117a83cd2e00795b3bcc87140932a1cfab1c3347409c",
+        "qa_provisional_params": {"alpha": 0.5, "beta": 0.0, "contrast_margin": 0.0, "degrade_mode": "blur_downsample", "gate": "visual_conflict"},
+        "qa_delta_cf_cs": [-0.014285714285714346, 0.0],
+        "mc_selection": "result/baseline_sweeps/vcd_dev70_mc_32b_instruct.json",
+        "mc_selection_sha256": "a78d568347ab5d29559b65d1941ad3ded39456c325c4de92b7ab6c636d34d2e5",
+        "mc_provisional_params": {"alpha": 1.5, "beta": 0.0, "contrast_margin": 0.0, "degrade_mode": "blur_downsample", "gate": "always"},
+        "mc_delta_cf_cs": [0.08571428571428563, -0.014285714285714346],
+        "warning": "These selections cover only the blur_downsample score-compatible subset. The predeclared blur and downsample views remain to be collected before final VCD freezing."
+      },
+      "development_all_views": {
+        "score_artifacts": {
+          "blur_downsample": {
+            "path": "result/vcd_candidate_dev70_32b_instruct_officialscore/Qwen3-VL-32B-Instruct-transformers/results.jsonl",
+            "sha256": "912c0702fac261e04d2bcf41b1853861c0a0e809649d5ebbf3de0d2b7ddd4f1b"
+          },
+          "blur": {
+            "path": "result/vcd_candidate_dev70_32b_instruct_blur/Qwen3-VL-32B-Instruct-transformers/results.jsonl",
+            "sha256": "7648a8677e3fdda0d5f9fa4b064db38dea563c8cdcaa5d21ea078ee7bffb0871"
+          },
+          "downsample": {
+            "path": "result/vcd_candidate_dev70_32b_instruct_downsample/Qwen3-VL-32B-Instruct-transformers/results.jsonl",
+            "sha256": "13aacdc9804b829598a702f5cbb399a831f7e7e209cfb8f9f671cdecd98d4881"
+          }
+        },
+        "qa_selection": "result/baseline_sweeps/vcd_dev70_allviews_qa_32b_instruct.json",
+        "qa_selection_sha256": "04b599354e9a43e572857c84f8ea8fed122196027bce22495aa3581d58460e1a",
+        "qa_frozen_params": {"alpha": 0.5, "beta": 0.0, "contrast_margin": 0.0, "degrade_mode": "blur", "gate": "visual_conflict"},
+        "qa_delta_cf_cs": [-0.014285714285714346, 0.0],
+        "mc_selection": "result/baseline_sweeps/vcd_dev70_allviews_mc_32b_instruct.json",
+        "mc_selection_sha256": "5315b65093b183bdbfdcac8e44904471655fcaee169a6f258de1fca815d1e476",
+        "mc_frozen_params": {"alpha": 1.5, "beta": 0.0, "contrast_margin": 0.0, "degrade_mode": "blur_downsample", "gate": "always"},
+        "mc_delta_cf_cs": [0.08571428571428563, -0.014285714285714346]
+      },
+      "blind_artifact": {
+        "mc_scores": "result/vcd_candidate_cpr_unseen_mc_32b_instruct/Qwen3-VL-32B-Instruct-transformers/results.jsonl",
+        "mc_scores_sha256": "c808aea9763b6b624a3daf63016f7243e3930c947ed40d50332b6f8414fcd2b8",
+        "mc_result": "result/baseline_frozen_transfer/vcd_cpr_unseen_mc_32b_instruct.json",
+        "mc_result_sha256": "2705f06c11579047245be2a0e64aebe5763c63b12a1bfb53a62e35e18d33ad9c",
+        "mc_delta_cf_cs": [0.043478260869565216, -0.021739130434782608],
+        "mc_cf_mcnemar_p": 0.06391465663909912,
+        "qa_scores": "result/vcd_candidate_cpr_unseen_qa_32b_instruct/Qwen3-VL-32B-Instruct-transformers/results.jsonl",
+        "qa_scores_sha256": "a2fc46a935524c53066183f32d0ca41e1dc182dca63a2ff5aa887bcad8616ca3",
+        "qa_result": "result/baseline_frozen_transfer/vcd_cpr_unseen_qa_32b_instruct.json",
+        "qa_result_sha256": "47a57c9fb98a5e4d3d5bac1624e4e7bca5023117456ab93d04df097e9c454915",
+        "qa_delta_cf_cs": [-0.013043478260869565, 0.0],
+        "qa_cf_mcnemar_p": 0.25
+      }
+    },
+    "pai_candidate": {
+      "status": "development_and_blind_complete",
+      "mitigation": "pai",
+      "score": "gamma*logp_image-(gamma-1)*logp_no_image",
+      "grid": {
+        "gamma": [1.1, 1.5, 2.0],
+        "beta": [0.1],
+        "gate": ["always"]
+      },
+      "development_artifact": {
+        "scores": "result/pai_candidate_dev70_32b_instruct/Qwen3-VL-32B-Instruct-transformers/results.jsonl",
+        "scores_sha256": "87baeccc51d792d21941a28c9c7f60051fd7622bf4024bf95470eb2e6c69d433",
+        "qa_selection": "result/baseline_sweeps/pai_dev70_qa_32b_instruct.json",
+        "qa_selection_sha256": "1225ee006dfcaacd8bd78299a0fd210f9078a0d456d7c72453069cbff34b2965",
+        "qa_frozen_params": {"gamma": 1.5, "beta": 0.1, "gate": "always"},
+        "qa_delta_cf_cs": [-0.2, 0.0],
+        "mc_selection": "result/baseline_sweeps/pai_dev70_mc_32b_instruct.json",
+        "mc_selection_sha256": "612a5695843a1f9e9275c4bc2d6db90f8375907641a2a778a1ee1dfaa127e27d",
+        "mc_frozen_params": {"gamma": 1.1, "beta": 0.1, "gate": "always"},
+        "mc_delta_cf_cs": [0.05714285714285716, 0.0]
+      },
+      "blind_artifact": {
+        "scores": "result/pai_candidate_cpr_unseen_32b_instruct/Qwen3-VL-32B-Instruct-transformers/results.jsonl",
+        "scores_sha256": "70251ef5f65a8bf694a6d6d410c75dfc6f0bfc8802cb5f9bc0aaccd3bcd88960",
+        "verified_rows": 920,
+        "verified_pairs": 230,
+        "qa_result": "result/baseline_frozen_transfer/pai_cpr_unseen_qa_32b_instruct.json",
+        "qa_result_sha256": "fdb8ee149bed7bf84d88a3879347b2b5ff53935cee8e03a0c862ed76f5674502",
+        "qa_delta_cf_cs": [-0.1782608695652174, -0.004347826086956522],
+        "qa_cf_mcnemar_p": 1.000444171950221e-11,
+        "mc_result": "result/baseline_frozen_transfer/pai_cpr_unseen_mc_32b_instruct.json",
+        "mc_result_sha256": "4c7b2daf7992269b5630c511ab3577e6e7d93b22f172c00f66c4832238125b1d",
+        "mc_delta_cf_cs": [0.008695652173913044, -0.008695652173913044],
+        "mc_cf_mcnemar_p": 0.75390625
+      },
+      "llava16_34b_artifact": {
+        "score_source": "The image/no-image candidate likelihoods already collected for EB-CPRC; Qwen replay exactly reproduces the dedicated PAI score artifacts and sweep decisions.",
+        "dev_scores": "result/cprc_llava16_34b_dev70/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+        "test_scores": "result/cprc_llava16_34b_cpr_unseen/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+        "qa_selection": "result/baseline_sweeps/pai_dev70_qa_llava16_34b.json",
+        "qa_selection_sha256": "4a66c6efcf041ae880852ea99425c2e2bf2fdd3df196df6b13fc9a5c23a1201d",
+        "qa_frozen_params": {"gamma": 2.0, "beta": 0.1, "gate": "always"},
+        "qa_result": "result/baseline_frozen_transfer/pai_cpr_unseen_qa_llava16_34b.json",
+        "qa_result_sha256": "f8ac26125cc57e130ba199e63dc0982a3de2c0b1b4199a1e1a9c86003ecc2fa3",
+        "qa_delta_cf_cs": [0.21304347826086956, -0.043478260869565216],
+        "qa_cf_repairs_harms": [51, 2],
+        "mc_selection": "result/baseline_sweeps/pai_dev70_mc_llava16_34b.json",
+        "mc_selection_sha256": "2772b226a0ae896f1762049558f8c7e3c3fb7032f7bffc59407020743711128d",
+        "mc_frozen_params": {"gamma": 2.0, "beta": 0.1, "gate": "always"},
+        "mc_result": "result/baseline_frozen_transfer/pai_cpr_unseen_mc_llava16_34b.json",
+        "mc_result_sha256": "9a33308d13a4311e497c96e7b7ea955d0cd6a32f44c56688c0f3963705ddda23",
+        "mc_delta_cf_cs": [0.06521739130434782, 0.008695652173913044],
+        "mc_cf_repairs_harms": [18, 3]
+      },
+      "note": "PAI is selected instead of OPERA for the main QA/MC table because its CFG component admits a direct finite-candidate adaptation. OPERA remains a caption/open-generation baseline until Qwen3-VL beam retrospection is ported."
+    },
+    "nolan_candidate": {
+      "status": "released_score_rule_candidate_replay",
+      "mitigation": "nolan",
+      "score": "(1+alpha)*logp_image-alpha*logp_no_image",
+      "dynamic_alpha": "beta*(tanh(1/symmetric_KL(q_image,q_no_image))+1)",
+      "grid": {
+        "beta": [0.8]
+      },
+      "fidelity": "The released dynamic suppression rule is evaluated over the task-native complete-answer distribution. This preserves NoLan's multimodal/text-only comparison but is not presented as an official token-level Qwen3-VL port.",
+      "artifacts": {
+        "qwen_mc_development": "result/baseline_sweeps/nolan_dev70_mc_qwen32b.json",
+        "qwen_qa_development": "result/baseline_sweeps/nolan_dev70_qa_qwen32b.json",
+        "llava_mc_development": "result/baseline_sweeps/nolan_dev70_mc_llava34b.json",
+        "llava_qa_development": "result/baseline_sweeps/nolan_dev70_qa_llava34b.json",
+        "qwen_mc_test": "result/baseline_frozen_transfer/nolan_cpr_unseen_mc_qwen32b.json",
+        "qwen_qa_test": "result/baseline_frozen_transfer/nolan_cpr_unseen_qa_qwen32b.json",
+        "llava_mc_test": "result/baseline_frozen_transfer/nolan_cpr_unseen_mc_llava34b.json",
+        "llava_qa_test": "result/baseline_frozen_transfer/nolan_cpr_unseen_qa_llava34b.json"
+      },
+      "artifact_sha256": {
+        "qwen_mc_development": "a0a08758c52000f23713dcc9da8b101e001a1b4c1da98a228a4299f6c8290b87",
+        "qwen_qa_development": "f9fd273b561a4417ff326e7183fbd8d511db4d44b260ac0a956031c389a6eb26",
+        "llava_mc_development": "f97fb9b2605fc8361f5aac9570fb73af2b7454d3c6a314cf4635fcc888e7a24b",
+        "llava_qa_development": "fcfcb26c44f0452fc8404e77b8068aa6751167fd50eeaab7795fee9fb046b0a3",
+        "qwen_mc_test": "f3d89b0f50f3e4e7012e8ea1bdf4899331b077394d9f2f0cba1989db0ac9395b",
+        "qwen_qa_test": "7e75f34c86cc670dece2b67ff30b5ac7357de33eec307859695b2ada409c2bc1",
+        "llava_mc_test": "5f75ed31908de52f5ed36ecfd2c3ce75886eb3cd75f77d79c0950473809d4c2c",
+        "llava_qa_test": "0b56d87c12fc4eba363713253727a34d1844226eeb9512323c6e1f0ff43cb098"
+      },
+      "test_delta_cf_cs": {
+        "qwen_mc": [0.1, -0.004347826086956522],
+        "qwen_qa": [0.06521739130434782, 0.0],
+        "llava_mc": [0.0782608695652174, 0.004347826086956522],
+        "llava_qa": [0.26956521739130435, -0.06086956521739131]
+      }
+    },
+    "mfcd_candidate": {
+      "status": "development_and_blind_complete",
+      "mitigation": "mfcd",
+      "score": "(1+alpha_low+alpha_high)*logp_image-alpha_low*logp_low-alpha_high*logp_high",
+      "grid": {
+        "alpha_low": [0.5, 1.0, 1.5],
+        "alpha_high": [0.5, 1.0, 1.5],
+        "beta": [0.0, 0.1, 0.3],
+        "low_mode": ["blur_downsample", "blur"],
+        "high_mode": ["high_pass", "edges"],
+        "gate": ["always", "visual_conflict", "frequency_conflict"],
+        "contrast_margin": [0.0, 0.25, 0.75]
+      },
+      "development_all_views": {
+        "score_artifacts": {
+          "blur_downsample+high_pass": {"path": "result/mfcd_candidate_dev70_32b_instruct_blurdown_highpass/Qwen3-VL-32B-Instruct-transformers/results.jsonl", "sha256": "7bcc13fbf9aebf902a79679e7c4d98e0e9a4bfa6f6e1c1ef1b441a620a537b14"},
+          "blur_downsample+edges": {"path": "result/mfcd_candidate_dev70_32b_instruct_blurdown_edges/Qwen3-VL-32B-Instruct-transformers/results.jsonl", "sha256": "14b2f603da902425ea384a8fde43dbad01c9c5d38b9c07296c641a3faeab7ef2"},
+          "blur+high_pass": {"path": "result/mfcd_candidate_dev70_32b_instruct_blur_highpass/Qwen3-VL-32B-Instruct-transformers/results.jsonl", "sha256": "34290a5d1a354b34c952a824b52c03261001c68008357d085e35e5f81069254d"},
+          "blur+edges": {"path": "result/mfcd_candidate_dev70_32b_instruct_blur_edges/Qwen3-VL-32B-Instruct-transformers/results.jsonl", "sha256": "e4ec9a3fdcdb4678f804681cff6b4ad9683b4bbe6430fa4b3d6b43927b7a268d"}
+        },
+        "qa_selection": "result/baseline_sweeps/mfcd_dev70_allviews_qa_32b_instruct.json",
+        "qa_selection_sha256": "d58a0df731e1c5a92e2010cb28c249ff548896211b13b788deb2ce7332667ba4",
+        "qa_frozen_params": {"alpha_high": 0.5, "alpha_low": 0.5, "beta": 0.0, "contrast_margin": 0.0, "gate": "frequency_conflict", "high_mode": "high_pass", "low_mode": "blur"},
+        "qa_delta_cf_cs": [0.0, 0.0],
+        "mc_selection": "result/baseline_sweeps/mfcd_dev70_allviews_mc_32b_instruct.json",
+        "mc_selection_sha256": "a8117ef2e8d64fffc82bd6209323c2908666de48ab817ac3d73404e2140a8f6a",
+        "mc_frozen_params": {"alpha_high": 0.5, "alpha_low": 1.5, "beta": 0.0, "contrast_margin": 0.0, "gate": "always", "high_mode": "edges", "low_mode": "blur"},
+        "mc_delta_cf_cs": [0.08571428571428563, -0.014285714285714346]
+      },
+      "blind_artifact": {
+        "mc_scores": "result/mfcd_candidate_cpr_unseen_mc_32b_instruct/Qwen3-VL-32B-Instruct-transformers/results.jsonl",
+        "mc_scores_sha256": "bce762cf1dc5402efe5923956aad2c3c9091666b64c46776a3d0b2fe3c35a497",
+        "mc_result": "result/baseline_frozen_transfer/mfcd_cpr_unseen_mc_32b_instruct.json",
+        "mc_result_sha256": "2ec2a63cea1c164a9a01fc6e2c6c596b3548d2a6a5a0b10a60685616c07437f3",
+        "mc_delta_cf_cs": [0.034782608695652174, -0.021739130434782608],
+        "mc_cf_mcnemar_p": 0.15158963203430176,
+        "qa_scores": "result/mfcd_candidate_cpr_unseen_qa_32b_instruct/Qwen3-VL-32B-Instruct-transformers/results.jsonl",
+        "qa_scores_sha256": "8e3bb6f1d1a323cdfe7a78840180e9e4c6dc10b04ef4e1421cc31b281f26d3a4",
+        "qa_result": "result/baseline_frozen_transfer/mfcd_cpr_unseen_qa_32b_instruct.json",
+        "qa_result_sha256": "6fe31758b0c14e7f3a4d7458f388c0342d06276c1779d1b21865f7354d67727d",
+        "qa_delta_cf_cs": [-0.013043478260869565, 0.0],
+        "qa_cf_mcnemar_p": 0.25
+      }
+    },
+    "revis_official": {
+      "status": "development_and_blind_complete",
+      "mitigation": "revis",
+      "mode": "official",
+      "protocol": "configs/official_revis_frozen_v1.json",
+      "parameters": {
+        "alpha_visual": 1.6,
+        "alpha_source": "REVIS paper Qwen-family setting",
+        "risk_gamma": 1.0,
+        "calibration_percentile": 85,
+        "calibration_max_samples": 300,
+        "min_layer": 10,
+        "selected_layer": 46,
+        "tau_low": -0.2177734375
+      },
+      "blind_artifact": {
+        "scores": "result/official_revis/qwen3vl32b_cpr_unseen_paper_alpha16/Qwen3-VL-32B-Instruct-official-revis-paper-alpha16/results.jsonl",
+        "scores_sha256": "93a621b88dce8d88b2bfb67d81fee46a3b70f4e73598719e48fe7316bd62d755",
+        "analysis": "result/official_revis/qwen3vl32b_cpr_unseen_official_alpha16_analysis.json",
+        "analysis_sha256": "96a3fc1f2778894bb639097bbc80fe33a3a66a53f4d64cd189f41f4a2b97c940",
+        "mc_delta_cf_cs": [-0.013043478260869565, 0.0],
+        "qa_delta_cf_cs": [-0.021739130434782608, -0.004347826086956522],
+        "qa_cf_answer_transitions": {
+          "no_to_yes": 7,
+          "yes_to_no": 2
+        }
+      },
+      "llava_paper_parameter_artifact": {
+        "alpha_visual": 1.1,
+        "scores": "result/official_revis/llava16_34b_cpr_unseen_paper_alpha11/LLaVA-1.6-34B-Instruct-transformers/results.jsonl",
+        "scores_sha256": "9da834f781cfd3f7f742cfae6e320f75adec62acdfbe9ac08f3afe09042d0bbc",
+        "analysis": "result/official_revis/llava16_34b_cpr_unseen_official_alpha11_analysis.json",
+        "analysis_sha256": "a8ef8c235e3b926cf6f6e54a27360c2bae159a5b5d839ff2c56d86f4822fecf3",
+        "mc_delta_cf_cs": [-0.013043478260869565, 0.008695652173913044],
+        "qa_delta_cf_cs": [0.14782608695652175, -0.030434782608695653],
+        "qa_cf_answer_transitions": {
+          "yes_to_no": 36
+        }
+      },
+      "main_table": true
+    },
+    "revis_candidate": {
+      "status": "paper_inspired_development_and_blind_complete",
+      "mitigation": "revis",
+      "grid": {
+        "lambda_prior": [0.3, 0.6, 0.9, 1.2],
+        "lambda_hidden": [0.0, 0.25, 0.5, 1.0],
+        "gate": ["dynamic"],
+        "contrast_margin": [0.0, 0.25, 0.75],
+        "absmax_min": [0.0, 0.1, 0.2, 0.3]
+      },
+      "development_artifact": {
+        "scores": "result/revis_candidate_dev70_32b_instruct/Qwen3-VL-32B-Instruct-transformers/results.jsonl",
+        "scores_sha256": "a498b801290761fc683cdde421a4e8b92aae09c4082aa11f196b097965e0d18d",
+        "orthogonal_signal_available_rows": 280,
+        "qa_selection": "result/baseline_sweeps/revis_dev70_qa_32b_instruct.json",
+        "qa_selection_sha256": "f92033b05d19d2821ac18bdfb6438baad78a67948d21c7eed29f74a70acc1ed8",
+        "qa_frozen_params": {"absmax_min": 0.0, "contrast_margin": 0.0, "gate": "dynamic", "lambda_hidden": 1.0, "lambda_prior": 0.9},
+        "qa_delta_cf_cs": [0.17142857142857137, -0.014285714285714346],
+        "mc_selection": "result/baseline_sweeps/revis_dev70_mc_32b_instruct.json",
+        "mc_selection_sha256": "91d4d2e1bfb8b5118bb91f0ae2e00f0efa33b7916e549531c78d8e14ac6c8b5e",
+        "mc_frozen_params": {"absmax_min": 0.0, "contrast_margin": 0.0, "gate": "dynamic", "lambda_hidden": 0.0, "lambda_prior": 0.6},
+        "mc_delta_cf_cs": [0.12857142857142856, -0.02857142857142858],
+        "interpretation": "QA uses the orthogonal hidden signal. MC selects lambda_hidden=0, so MC improvement is prior subtraction rather than latent steering."
+      },
+      "blind_artifact": {
+        "qa_scores": "result/revis_candidate_cpr_unseen_qa_32b_instruct/Qwen3-VL-32B-Instruct-transformers/results.jsonl",
+        "qa_scores_sha256": "06c73c7fd34014f2f2c5bf8cba7ad20e6c0f9917a95145cde76a917358735ef2",
+        "qa_result": "result/baseline_frozen_transfer/revis_cpr_unseen_qa_32b_instruct.json",
+        "qa_result_sha256": "a82f0e0a092f451438a65ce57801879dbcb04acbc91c9fd71182aa8debdf3a20",
+        "qa_verified_rows": 460,
+        "qa_verified_pairs": 230,
+        "qa_delta_cf_cs": [0.18695652173913044, -0.0391304347826087],
+        "qa_cf_repairs_harms": [45, 2],
+        "qa_cf_mcnemar_p": 1.6044054973463062e-11,
+        "qa_cf_bootstrap_ci95": [0.13478260869565217, 0.24347826086956523],
+        "mc_scores": "result/revis_candidate_cpr_unseen_mc_32b_instruct/Qwen3-VL-32B-Instruct-transformers/results.jsonl",
+        "mc_scores_sha256": "2109951425c577016e654afe2f334d0464622b241d8a0a0c01f5e61aefafe0f5",
+        "mc_result": "result/baseline_frozen_transfer/revis_cpr_unseen_mc_32b_instruct.json",
+        "mc_result_sha256": "09cc0c8377541607a43ddfe05ccf0e6264ba84e8c41e8bbdce87bbf461e82406",
+        "mc_verified_rows": 460,
+        "mc_verified_pairs": 230,
+        "mc_candidate_count_per_row": 4,
+        "mc_delta_cf_cs": [0.09130434782608696, 0.004347826086956522],
+        "mc_cf_repairs_harms": [23, 2],
+        "mc_cf_mcnemar_p": 1.9431114196777344e-05,
+        "mc_cf_bootstrap_ci95": [0.05217391304347825, 0.13478260869565217],
+        "pair_overlap_with_development": 0,
+        "no_test_refit": true
+      },
+      "official_fidelity": "This completed CDH adapter is not official REVIS. It is retained only as a supplementary prior-subtraction/hidden-residual diagnostic; the main table uses revis_official."
+    }
+  },
+  "fairness": {
+    "allowed": ["task_native_question", "task_native_options_for_mc", "single_image", "same_image_derived_views", "model_internal_state", "no_image_pass_of_same_prompt"],
+    "forbidden": ["paired_reference_image", "cf_cs_label", "subcategory_at_inference", "ground_truth_claims", "cross_track_predictions", "blind_labels_for_selection"]
+  },
+  "implementation_hashes": {
+    "evaluator": "7e9204632123d683552d6b92d70ed0e61acf80e163577eaac984e009a06ad8fc",
+    "development_sweep": "f09e805d6dac15c1b151985b9b0177a08756daf8592649ab26d5a41c97bad22a",
+    "frozen_transfer": "79ad10a7e2ff0d897a7205fb769b3c42f6745fba6b2ad2f43a72f98b9d1f61e3",
+    "paired_direct_baseline": "88e43ffd311ae2941318385768db81bb60ba0a5713c97ff26c5b37239c67d387"
+  }
+}

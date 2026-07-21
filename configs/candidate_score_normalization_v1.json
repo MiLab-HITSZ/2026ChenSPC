@@ -1,0 +1,14 @@
+{
+  "version": "candidate_score_normalization_v1",
+  "frozen_at_utc": "2026-07-16",
+  "paired_calibration_config": "configs/cprc_paired_calibration_v1.json",
+  "primary_score": "sum of conditional token log-likelihoods over the complete answer-key branch",
+  "sensitivity_score": "mean conditional token log-likelihood over the same branch",
+  "fixed_lambda_grid": [0.1, 0.2, 0.3, 0.5, 0.8, 1.0, 1.2, 1.5],
+  "audit": {
+    "candidate_text": "QA scores yes/no keys; MC scores A/B/C/D keys, not option descriptions.",
+    "multi_token": "Every token in a candidate key is teacher-forced after one shared prompt prefix.",
+    "views": "The image and no-image views use the same candidate key and normalization.",
+    "selection": "Sum and mean variants are independently refit and selected on the same 70 paired development examples at the same 4-point CS budget."
+  }
+}

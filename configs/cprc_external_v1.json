@@ -1,0 +1,171 @@
+{
+  "version": "cprc_external_v1",
+  "frozen_at_utc": "2026-07-14",
+  "model": {
+    "name": "Qwen3-VL-32B-Instruct",
+    "config": "configs/qwen_32b_instruct_bf16_fair.json",
+    "config_sha256": "99ec318361ee17392bff2416c222959979a4d0b83b6a7f951135ecc7542710fc",
+    "quantization": "none",
+    "dtype": "bfloat16",
+    "decoding": "greedy"
+  },
+  "calibration": {
+    "source": "CDH cpr_development only",
+    "pairs": 70,
+    "dev_mc": "result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+    "dev_qa": "result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+    "selection_objective": "delta_CF + 0.5 * delta_CS",
+    "max_development_cs_drop": 0.2,
+    "external_labels_used_for_fit_or_selection": false
+  },
+  "hallusionbench": {
+    "selection": "Every exact visual_input=1 easy / visual_input=2 hard pair with identical question text and opposite ground truth.",
+    "response_blind_selection": true,
+    "eligible_pairs": 328,
+    "evaluated_pairs": 328,
+    "manifest": "data/hallusionbench_qa_transfer_full/manifest.json",
+    "manifest_sha256": "9ed1ce358d5daeaf13bc72a68d87aac39f08149aa112799ddae1cfe64d195043",
+    "dataset": "data/hallusionbench_qa_transfer_full/hallusionbench_qa.jsonl",
+    "dataset_sha256": "cf360e31641b52dd8d49787f89477824d70981f63dc0af264adab8e49a670410",
+    "selection_sha256": "f7e5649cce0731ef8139c42581d9a8a9255e9b5627e253f37b4a098ebf8298e1",
+    "image_preprocessing": "model_native for baseline generation and candidate scoring",
+    "baseline_provenance": "The exact BF16 baseline generations stored by the official REVIS run are reused by EB-CPRC.",
+    "eb_cprc": {
+      "raw_score_shards": [
+        "result/hallusionbench_qa_transfer_full_32b_bf16_native_candidate_scores/shard0.jsonl",
+        "result/hallusionbench_qa_transfer_full_32b_bf16_native_candidate_scores/shard1.jsonl"
+      ],
+      "raw_score_shard_sha256": [
+        "eb453dd97162f9cc6b0769289b942f9d634834b07b5c547d1f853056b25f83d4",
+        "de6ffb2a60d0ff18a5c20e9a1b5f0ce6e5f49b7ce9777a5630035cbb93ac0a34"
+      ],
+      "analysis": "result/cprc_external/hallusionbench_full_cdh_frozen_bf16_native_v1.json",
+      "analysis_sha256": "6f60cb0e22f24af3f4d9c8f0e9bc0facafd874e7441bab8aa151deab78617e2a",
+      "status": "complete",
+      "counterfactual_baseline_accuracy": 0.6067073170731707,
+      "counterfactual_accuracy": 0.6554878048780488,
+      "counterfactual_delta": 0.04878048780487805,
+      "counterfactual_repairs_harms": [16, 0],
+      "counterfactual_mcnemar_p": 0.000030517578125,
+      "counterfactual_delta_ci95": [0.027439024390243903, 0.07317073170731707],
+      "commonsense_baseline_accuracy": 0.8475609756097561,
+      "commonsense_accuracy": 0.823170731707317,
+      "commonsense_delta": -0.024390243902439025,
+      "commonsense_repairs_harms": [2, 10],
+      "commonsense_mcnemar_p": 0.03857421875,
+      "commonsense_delta_ci95": [-0.04573170731707317, -0.006097560975609756]
+    },
+    "official_revis": {
+      "alpha_visual": 1.6,
+      "risk_gamma": 1.0,
+      "vector_file": "result/official_revis/qwen3vl32b_vectors_official100.pt",
+      "calibration_file": "result/official_revis/qwen3vl32b_calibration_official300_p85.json",
+      "raw_result_shards": [
+        "result/official_revis/qwen3vl32b_hallusionbench_full_alpha16_shard0/Qwen3-VL-32B-Instruct-BF16/results.jsonl",
+        "result/official_revis/qwen3vl32b_hallusionbench_full_alpha16_shard1/Qwen3-VL-32B-Instruct-BF16/results.jsonl"
+      ],
+      "raw_result_shard_sha256": [
+        "6f2ef7a60d7e9e617c07281af991cd1e8640fc0ca9e17b5452aafaaba49f99b6",
+        "6fb31185373b1ca70a512b9d6bd1dda1d703b3632037eb1a668159f6f7c9640f"
+      ],
+      "analysis": "result/cprc_external/hallusionbench_full_revis_alpha16_bf16_v1.json",
+      "analysis_sha256": "8a6ba4fc89a03383a62a11d781b34a4b0ab95abc2ce5a712752da5ad6915076b",
+      "counterfactual_delta": 0.006097560975609756,
+      "commonsense_delta": -0.009146341463414634,
+      "counterfactual_repairs_harms": [6, 4],
+      "commonsense_repairs_harms": [4, 7]
+    }
+  },
+  "pope": {
+    "selection": "All released COCO random, popular, and adversarial questions.",
+    "response_blind_selection": true,
+    "protocol_counts": {
+      "random": 3000,
+      "popular": 3000,
+      "adversarial": 3000
+    },
+    "manifest": "data/pope_native/manifest.json",
+    "manifest_sha256": "091b7b9acc2d86be6df899be0ba5f976287a73e4f8108e6096ac2986fde2c06c",
+    "dataset": "data/pope_native/pope_native.jsonl",
+    "dataset_sha256": "f1be5ed2a3dcdf36819f9f6d479854b8362e72a528c7ea040a834120ea57fef7",
+    "selection_sha256": "ea4279c4dc2bc5ea9c2c8c744021636d789c75b7d5906bfbe93dd8e989fbb4a8",
+    "image_preprocessing": "fixed 512x512 for both baseline generation and candidate scoring",
+    "raw_result_shards": [
+      "result/pope_native_qwen32b_bf16/shard0.jsonl",
+      "result/pope_native_qwen32b_bf16/shard1.jsonl"
+    ],
+    "raw_result_shard_sha256": [
+      "3c843aac6a2886a9b8b720f98faf0f644e6f97bbc5692bd851e88e82fe838660",
+      "5acd477377652bac7653359b1087e73d5a4acaae80b5964130508a5da26b0c38"
+    ],
+    "analysis": "result/cprc_external/pope_native_full_cdh_frozen_bf16_v1.json",
+    "analysis_sha256": "8323dff52ea2506ff9fad2c931fced74a1689f7492b72a451c11b22353bf8939",
+    "status": "complete",
+    "results": {
+      "random": {"accuracy": 0.917, "f1": 0.9107206884187881, "interventions": 0},
+      "popular": {"accuracy": 0.8976666666666666, "f1": 0.8921671935370565, "interventions": 0},
+      "adversarial": {"accuracy": 0.8813333333333333, "f1": 0.8770718232044199, "interventions": 0},
+      "overall": {"accuracy": 0.8986666666666666, "f1": 0.8931082981715892, "interventions": 0}
+    }
+  },
+  "conflictvis": {
+    "source": "xiaoyuanliu/conflict_vis",
+    "source_revision": "36d9df448f6377511960745e95f9298db292e280",
+    "official_repository": "https://github.com/xyliu-cs/ConflictVIS",
+    "official_repository_commit": "34567635933a3be59ff03fa13f3991da33a7b4f8",
+    "selection": "All 374 official YN rows and 374 official MC rows. Open-ended SUBJ rows were excluded before inference because EB-CPRC requires a finite native candidate set.",
+    "response_blind_selection": true,
+    "external_labels_used_for_fit_or_selection": false,
+    "concepts": 374,
+    "candidate_complete_rows": 748,
+    "task_counts": {"qa": 374, "mc": 374},
+    "concept_target_counts": {"action": 171, "place": 203},
+    "qa_label_distribution": {"yes": 374, "no": 0},
+    "mc_label_distribution": {"A": 112, "B": 84, "C": 81, "D": 97},
+    "manifest": "data/conflictvis_transfer/manifest.json",
+    "manifest_sha256": "46327659f6daf43591c72c89c1a98add0ec20a1b19b6951a7675c3bebaa4e669",
+    "dataset": "data/conflictvis_transfer/conflictvis_candidate_complete.jsonl",
+    "dataset_sha256": "6f3a6474e1d93cd0964f2caa381a10baa0b61f9d4a557c585e1453847c2539a7",
+    "image_preprocessing": "model_native",
+    "raw_score_shards": [
+      "result/cprc_external/conflictvis_full_bf16_shard0.jsonl",
+      "result/cprc_external/conflictvis_full_bf16_shard1.jsonl"
+    ],
+    "raw_score_shard_sha256": [
+      "dce40719cb572ad2f26ac236f8a6e75f9f761ba04e104596c9f02c3bd931d566",
+      "0718a80bfb493230dc2c9921033dfe3686712a627c43c40d44cdc0368b8815dd"
+    ],
+    "analysis": "result/cprc_external/conflictvis_full_frozen_bf16_v1.json",
+    "analysis_sha256": "80a77a323e50a68aee7f36bfdccb57f09580dd05831b1ff84d441702a89c7c18",
+    "status": "complete",
+    "eb_cprc": {
+      "qa": {"baseline_accuracy": 0.7379679144385026, "accuracy": 0.7406417112299465, "delta_accuracy": 0.00267379679144385, "repairs_harms": [1, 0], "mcnemar_p": 1.0},
+      "mc": {"baseline_accuracy": 0.9705882352941176, "accuracy": 0.9893048128342246, "delta_accuracy": 0.01871657754010695, "repairs_harms": [7, 0], "mcnemar_p": 0.015625, "delta_accuracy_ci95": [0.0053475935828877, 0.034759358288770054]},
+      "overall": {"baseline_accuracy": 0.8542780748663101, "accuracy": 0.8649732620320856, "delta_accuracy": 0.0106951871657754, "repairs_harms": [8, 0], "mcnemar_p": 0.0078125}
+    },
+    "pai_cfg": {
+      "calibration": "Qwen CDH development-only parameters: gamma=1.5 for QA and gamma=1.1 for MC, beta=0.1.",
+      "qa": {"baseline_accuracy": 0.7379679144385026, "accuracy": 0.9973262032085561, "delta_accuracy": 0.25935828877005346, "repairs_harms": [97, 0]},
+      "mc": {"baseline_accuracy": 0.9705882352941176, "accuracy": 0.9759358288770054, "delta_accuracy": 0.0053475935828877, "repairs_harms": [2, 0]},
+      "interpretation": "The QA gain is not treated as balanced evidence because all 374 YN labels are yes and the benchmark has no matched ordinary-side retention control."
+    }
+  },
+  "statistics": {
+    "bootstrap_draws": 10000,
+    "seed": 20260714,
+    "paired_accuracy_interval": "Empirical repair/harm multinomial bootstrap, equivalent to paired row resampling for binary accuracy differences.",
+    "paired_test": "Exact two-sided McNemar test"
+  },
+  "commands": {
+    "hallusionbench_score_shard_0": "CUDA_VISIBLE_DEVICES=0,1,2,3 python evaluate_paired_qa_candidate_scores.py --dataset data/hallusionbench_qa_transfer_full/hallusionbench_qa.jsonl --images-root data/hallusionbench_qa_transfer_full/images --baseline-results result/official_revis/qwen3vl32b_hallusionbench_full_alpha16_shard0/Qwen3-VL-32B-Instruct-BF16/results.jsonl --models configs/qwen_32b_instruct_bf16_fair.json --output result/hallusionbench_qa_transfer_full_32b_bf16_native_candidate_scores/shard0.jsonl --shard-index 0 --shard-count 2",
+    "hallusionbench_score_shard_1": "CUDA_VISIBLE_DEVICES=4,5,6,7 python evaluate_paired_qa_candidate_scores.py --dataset data/hallusionbench_qa_transfer_full/hallusionbench_qa.jsonl --images-root data/hallusionbench_qa_transfer_full/images --baseline-results result/official_revis/qwen3vl32b_hallusionbench_full_alpha16_shard1/Qwen3-VL-32B-Instruct-BF16/results.jsonl --models configs/qwen_32b_instruct_bf16_fair.json --output result/hallusionbench_qa_transfer_full_32b_bf16_native_candidate_scores/shard1.jsonl --shard-index 1 --shard-count 2",
+    "hallusionbench_eb_analysis": "python analyze_hierarchical_eb_lambda_cv.py --input dev_mc:mc=result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl --input dev_qa:qa=result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl --input hallusion_full:qa=result/hallusionbench_qa_transfer_full_32b_bf16_native_candidate_scores/shard0.jsonl --input hallusion_full:qa=result/hallusionbench_qa_transfer_full_32b_bf16_native_candidate_scores/shard1.jsonl --output result/cprc_external/hallusionbench_full_cdh_frozen_bf16_native_v1.json --mode frozen_transfer --train-label dev_mc --train-label dev_qa --max-cs-drop 0.20 --selection-objective net_utility --cs-cost 0.5 --quadrature-points 64 --bootstrap 10000 --seed 20260714",
+    "pope_collection_shard_0": "CUDA_VISIBLE_DEVICES=0,1,2,3 python evaluate_pope_native.py --dataset data/pope_native/pope_native.jsonl --models configs/qwen_32b_instruct_bf16_fair.json --output result/pope_native_qwen32b_bf16/shard0.jsonl --shard-index 0 --shard-count 2",
+    "pope_collection_shard_1": "CUDA_VISIBLE_DEVICES=4,5,6,7 python evaluate_pope_native.py --dataset data/pope_native/pope_native.jsonl --models configs/qwen_32b_instruct_bf16_fair.json --output result/pope_native_qwen32b_bf16/shard1.jsonl --shard-index 1 --shard-count 2",
+    "pope_analysis": "python analyze_pope_native_cprc.py --pope result/pope_native_qwen32b_bf16/shard0.jsonl --pope result/pope_native_qwen32b_bf16/shard1.jsonl --dev-mc result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl --dev-qa result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl --output result/cprc_external/pope_native_full_cdh_frozen_bf16_v1.json --bootstrap 10000 --seed 20260714",
+    "conflictvis_prepare": "python prepare_conflictvis_transfer.py --dataset xiaoyuanliu/conflict_vis --split train --output-dir data/conflictvis_transfer",
+    "conflictvis_score_shard_0": "CUDA_VISIBLE_DEVICES=0,1,2,3 python evaluate_conflictvis_candidate_scores.py --dataset data/conflictvis_transfer/conflictvis_candidate_complete.jsonl --models configs/qwen_32b_instruct_bf16_fair.json --output result/cprc_external/conflictvis_full_bf16_shard0.jsonl --shard-index 0 --shard-count 2 --retry 2",
+    "conflictvis_score_shard_1": "CUDA_VISIBLE_DEVICES=4,5,6,7 python evaluate_conflictvis_candidate_scores.py --dataset data/conflictvis_transfer/conflictvis_candidate_complete.jsonl --models configs/qwen_32b_instruct_bf16_fair.json --output result/cprc_external/conflictvis_full_bf16_shard1.jsonl --shard-index 1 --shard-count 2 --retry 2",
+    "conflictvis_analysis": "python analyze_conflictvis_cprc.py --target result/cprc_external/conflictvis_full_bf16_shard0.jsonl --target result/cprc_external/conflictvis_full_bf16_shard1.jsonl --dev-mc result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl --dev-qa result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl --pai-mc-selection result/baseline_sweeps/pai_dev70_mc_32b_instruct.json --pai-qa-selection result/baseline_sweeps/pai_dev70_qa_32b_instruct.json --output result/cprc_external/conflictvis_full_frozen_bf16_v1.json --bootstrap 10000 --seed 20260715"
+  }
+}

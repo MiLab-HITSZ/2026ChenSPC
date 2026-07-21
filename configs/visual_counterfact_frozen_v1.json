@@ -1,0 +1,50 @@
+{
+  "version": "visual_counterfact_frozen_v1",
+  "frozen_at_utc": "2026-07-15",
+  "status_at_freeze": "protocol fixed before any model response was collected",
+  "official_dataset": {
+    "repository": "mgolov/Visual-Counterfact",
+    "revision": "f8cd0b2335356b0f01a164df0cac7403f56a6c83",
+    "splits": {
+      "color": 493,
+      "size": 727
+    },
+    "selection": "all 1220 official rows; no filtering by model response"
+  },
+  "construction": {
+    "cs_image": "official original_image",
+    "cf_image": "official counterfact_image",
+    "cs_answer": "official correct_answer",
+    "cf_answer": "official incorrect_answer",
+    "color_question": "What color is the {object} in this image?",
+    "size_question": "Which object is larger in this image?",
+    "candidate_order": "alternate by immutable split row index; reverse parity offset between splits; share order across the two image sides",
+    "candidate_count": 2
+  },
+  "method_boundary": {
+    "calibration": "The already frozen 70-pair CDH-Bench development fit only.",
+    "target_refitting": false,
+    "target_threshold_selection": false,
+    "target_labels_used_at_inference": false,
+    "input": "one official image, one fixed question, and its two displayed candidates"
+  },
+  "models": {
+    "Qwen3-VL-32B-Instruct": "configs/qwen_32b_instruct_bf16_answer1.json",
+    "LLaVA-1.6-34B": "configs/llava16_34b_instruct_transformers_answer1.json"
+  },
+  "primary_metrics": [
+    "CF_Acc",
+    "CS_Acc",
+    "Delta_CF",
+    "Delta_CS",
+    "CF repairs/harms",
+    "CS repairs/harms"
+  ],
+  "strata": ["color", "size"],
+  "statistics": {
+    "uncertainty": "pair bootstrap 95% confidence interval",
+    "paired_test": "exact two-sided McNemar",
+    "familywise_correction": "Holm within the predeclared CF/CS endpoints"
+  },
+  "interpretation": "External frozen confirmation of prior-conflict transfer, not a new benchmark or a leaderboard claim."
+}

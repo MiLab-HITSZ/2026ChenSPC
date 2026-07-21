@@ -8,14 +8,14 @@ dev70 fit, blind cpr_unseen test):
   decomposition  Per-row proposal-state decomposition of the learned MAP route
                  (proposal z_M, gate g_M) against the NoLan fallback proposal
                  z_A: five mutually exclusive states with CF/CS repairs and
-                 harms under SPC-MAP, learned-route-only and NoLan-only.
+                 harms under SPC+NoLan, learned-route-only and NoLan-only.
   mc_only        Ablation: fit and select the learned route on dev_mc only
                  (same l2/cap/gate grid, same development selection protocol,
                  CS budget applied to dev_mc only); report test_mc deltas and
                  compare with the joint-fit frozen operating point.
   stability      Stability radius r_i = min(lambda_i - lambda_lo,
                  lambda_hi - lambda_i) of the frozen per-row coefficient inside
-                 the exact stable interval I_z, grouped by the final SPC-MAP
+                 the exact stable interval I_z, grouped by the final SPC+NoLan
                  outcome; Mann-Whitney test of repair vs harm radii.
 
 Re-run one analysis at a time:
@@ -475,7 +475,7 @@ def run_decomposition(
         nolan = reference["nolan"]
         cprc_map = reference["cprc_map"]
 
-        # SPC-MAP composition sanity: g_M=1 -> z_M, else z_A (which may be native).
+        # SPC+NoLan composition sanity: g_M=1 -> z_M, else z_A (which may be native).
         composition_mismatch = sum(
             cprc_map[i] != (learned[i] if learned[i] != native[i] else nolan[i])
             for i in range(len(rows))
@@ -1063,7 +1063,7 @@ def run_stability(
                 "minimum (display-scale convention of the interval figure)."
             ),
             "groups": (
-                "Outcome of the final SPC-MAP decision vs the native answer and gold: "
+                "Outcome of the final SPC+NoLan decision vs the native answer and gold: "
                 "cf/cs repair (wrong->right), cf/cs harm (right->wrong), "
                 "modified_neutral (changed without correctness change), "
                 "unchanged_correct / unchanged_wrong."

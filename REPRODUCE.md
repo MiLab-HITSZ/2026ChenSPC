@@ -289,7 +289,7 @@ python analyze_lambda_stable_intervals.py
 ```
 
 Writes `result/paper_revision_stats/lambda_intervals.json` and
-`paper/aaai27/figures/lambda_stable_intervals.pdf`, and cross-checks the
+`figures/lambda_stable_intervals.pdf`, and cross-checks the
 dev-fitted constant coefficient against `result/paper_revision_stats/stats.json`.
 
 ## Benchmark spectrum
@@ -305,15 +305,8 @@ SPC, SPC+NoLan, and native streams. External-benchmark replays are verified
 against `result/nolan_external_transfer/*.json` and the frozen SPC artifacts
 under `result/cprc_external/`.
 
-## Paper artifacts
-
-```bash
-python paper/aaai27/make_paper_figures.py
-python paper/aaai27/make_evidence_chain_v2.py
-python paper/aaai27/make_rq1_matrix.py
-python paper/aaai27/make_rq1_matrix_wide.py
-```
+## Artifact map
 
 The complete mapping from tables to machine-readable artifacts is in
-`paper/aaai27/ARTIFACT_MAP.md`; the typeset supplement supplies protocol and
+`ARTIFACT_MAP.md`; the typeset supplement supplies protocol and
 analysis details without repeating long repository paths in tables.

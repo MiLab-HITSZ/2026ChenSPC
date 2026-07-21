@@ -25,7 +25,7 @@ result/anchored_cprc/main_test.json; the verification is stored in the output.
 
 Outputs:
   result/paper_revision_stats/lambda_intervals.json
-  paper/aaai27/figures/lambda_stable_intervals.pdf (+ .png preview)
+  figures/lambda_stable_intervals.pdf (+ .png preview)
 
 Re-run:  cdh-bench-env/bin/python analyze_lambda_stable_intervals.py
 """
@@ -49,13 +49,13 @@ ROOT = Path(__file__).resolve().parent
 MAIN_TEST_JSON = ROOT / "result" / "anchored_cprc" / "main_test.json"
 REVISION_STATS_JSON = ROOT / "result" / "paper_revision_stats" / "stats.json"
 OUTPUT_JSON = ROOT / "result" / "paper_revision_stats" / "lambda_intervals.json"
-FIGURE_PDF = ROOT / "paper" / "aaai27" / "figures" / "lambda_stable_intervals.pdf"
+FIGURE_PDF = ROOT / "figures" / "lambda_stable_intervals.pdf"
 
 TOL = 1e-9
 QUADRATURE_POINTS = 64
 LAMBDA_DISPLAY_MAX = 1.6
 
-# Paper-figure style, matched to paper/aaai27/make_paper_figures.py.
+# Paper-figure style, matched to the AAAI-27 paper figures.
 BLUE = "#0072B2"
 ORANGE = "#D55E00"
 GRAY = "#6B7280"

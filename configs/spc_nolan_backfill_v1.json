@@ -24,7 +24,7 @@
   },
   "fairness": {
     "primary": "The learned MAP operating point is frozen before analytic fallback evaluation.",
-    "backfill": "Complete SPC-MAP uses released NoLan beta=0.8 only when the learned route retains the native answer.",
+    "backfill": "The SPC+NoLan composition uses released NoLan beta=0.8 only when the learned route retains the native answer.",
     "selection": "The primary analytic fallback is fixed. A support-gated fallback is retained only as a development-selected diagnostic under the same four-point CS budget; no test label or side identity is used."
   }
 }

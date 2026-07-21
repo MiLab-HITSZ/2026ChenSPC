@@ -1,14 +1,14 @@
 # SPC Artifact Map
 
 All paths are relative to the repository root. Reproduction commands are in
-`paper/aaai27/REPRODUCE.md`.
+`REPRODUCE.md`.
 
 ## Core Protocols and Scores
 
 - Learned-route evaluation protocol: `configs/spc_aaai_frozen_v1.json`
-- Complete SPC-MAP protocol: `configs/spc_nolan_backfill_v1.json`
-- Complete SPC-MAP analyzer: `analyze_nolan_backfill.py`
-- Complete SPC-MAP results: `result/cprc_robustness/nolan_support_backfill_qwen_llava_v1.json`
+- SPC+NoLan composition protocol: `configs/spc_nolan_backfill_v1.json`
+- SPC+NoLan composition analyzer: `analyze_nolan_backfill.py`
+- SPC+NoLan composition results: `result/cprc_robustness/nolan_support_backfill_qwen_llava_v1.json`
 - Split provenance: `runtime/paper/cdh_exposure_ledger.json`
 - Qwen analysis: `result/hierarchical_eb_lambda_32b/cprc_instruct_bf16_cpr_unseen_frozen_v1.json`
 - LLaVA analysis: `result/hierarchical_eb_lambda_32b/cprc_llava16_34b_cpr_unseen_frozen_v1.json`
@@ -61,7 +61,6 @@ All paths are relative to the repository root. Reproduction commands are in
 - MC-only calibration ablation: `result/paper_revision_stats/mc_only_ablation.json`
 - Stability-radius analysis: `result/paper_revision_stats/stability_radius.json`
 - Benchmark spectrum: `result/paper_revision_stats/benchmark_spectrum.json` (driver: `analyze_benchmark_spectrum.py`)
-- Evidence-chain figure v2: `paper/aaai27/make_evidence_chain_v2.py`
 - Calibration-size protocol: `configs/spc_calibration_size_v1.json`
 - Calibration-size curve: `result/cprc_robustness/calibration_size_qwen_llava_v1.json`
 - Qwen unseen families: `result/hierarchical_eb_lambda_32b/cprc_instruct_leave_one_supercategory_out_v1.json`

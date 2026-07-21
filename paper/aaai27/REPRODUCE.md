@@ -8,7 +8,7 @@ listed in `requirements-paper.txt`.
 Benchmark images, paired annotations, the split ledger, and the frozen
 candidate-score files consumed by every command below are **not** tracked in
 this repository. Download the dataset release from Hugging Face at
-**<HF_DATASET_URL>** and unpack it at the repository root so that `images/`,
+**https://huggingface.co/datasets/cks19999/CDH-Bench** and unpack it at the repository root so that `images/`,
 `data/`, and `result/` are populated. The frozen scores under `result/` make
 every table below reproducible without a GPU; they can also be regenerated
 from the images with the `evaluate_*_candidate_scores.py` scripts (GPU and

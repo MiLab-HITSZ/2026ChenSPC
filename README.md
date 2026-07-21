@@ -154,7 +154,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python evaluate_cdh_mc_candidate_scores.py \
 
 - **CDH-Bench** (images, paired annotations, split ledger, and the frozen
   candidate-score files used by all analyses): download the dataset release
-  from Hugging Face at **<HF_DATASET_URL>** and unpack it at the repository
+  from Hugging Face at **https://huggingface.co/datasets/cks19999/CDH-Bench** and unpack it at the repository
   root so that `images/`, `data/`, and `result/` are populated. The frozen
   score files under `result/` let every table be reproduced without a GPU;
   they can also be regenerated from the images with the `evaluate_*` scripts.

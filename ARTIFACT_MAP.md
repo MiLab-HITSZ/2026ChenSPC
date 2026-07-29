@@ -14,6 +14,16 @@ All paths are relative to the repository root. Reproduction commands are in
 - LLaVA analysis: `result/hierarchical_eb_lambda_32b/cprc_llava16_34b_cpr_unseen_frozen_v1.json`
 - Official REVIS protocol: `configs/official_revis_frozen_v1.json`
 - Strong baseline protocol: `configs/strong_baselines_frozen_v1.json`
+- Official baseline source revisions: `configs/official_baseline_sources.json`
+- Official NoLan token rule: `official_nolan_qwen3vl.py`
+- Official NoLan free-generation evaluator: `evaluate_official_nolan_qwen3vl.py`
+- Official NoLan constrained-answer evaluator: `evaluate_official_nolan_candidates.py`
+- Official NoLan model protocols:
+  `configs/{qwen_32b_instruct,llava16_34b_instruct}_nolan_official.json`
+- Official NoLan Qwen/LLaVA outputs:
+  `result/official_nolan_token/{qwen32b,llava34b}_*.jsonl`
+- VCD, MFCD, and PAI token rules: `official_token_baselines.py`
+- VCD, MFCD, and PAI evaluator: `evaluate_official_token_baselines.py`
 - NoLan Qwen MC/QA transfer: `result/baseline_frozen_transfer/nolan_cpr_unseen_{mc,qa}_qwen32b.json`
 - NoLan LLaVA MC/QA transfer: `result/baseline_frozen_transfer/nolan_cpr_unseen_{mc,qa}_llava34b.json`
 - Complete LLaVA baseline matrix: `result/baseline_frozen_transfer/llava16_34b_complete_baseline_matrix_v1.json`
@@ -61,6 +71,12 @@ All paths are relative to the repository root. Reproduction commands are in
 - MC-only calibration ablation: `result/paper_revision_stats/mc_only_ablation.json`
 - Stability-radius analysis: `result/paper_revision_stats/stability_radius.json`
 - Benchmark spectrum: `result/paper_revision_stats/benchmark_spectrum.json` (driver: `analyze_benchmark_spectrum.py`)
+- CS-budget transfer analysis: `analyze_spc_budget_transfer.py`
+- Main paper metric audit: `analyze_paper_core_metrics.py`
+- Matched SPC/NoLan controls: `analyze_matched_spc_nolan_controls.py`
+- Official NoLan external-data builder: `prepare_official_nolan_external.py`
+- Official NoLan external evaluator: `evaluate_official_nolan_external.py`
+- Official NoLan external reconciliation: `reconcile_official_nolan_external.py`
 - Calibration-size protocol: `configs/spc_calibration_size_v1.json`
 - Calibration-size curve: `result/cprc_robustness/calibration_size_qwen_llava_v1.json`
 - Qwen unseen families: `result/hierarchical_eb_lambda_32b/cprc_instruct_leave_one_supercategory_out_v1.json`

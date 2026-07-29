@@ -1,0 +1,86 @@
+{
+  "version": "official_baseline_sources_v1",
+  "verified_at_utc": "2026-07-27",
+  "methods": {
+    "VCD": {
+      "repository": "https://github.com/DAMO-NLP-SG/VCD",
+      "commit": "d6568ff81b8fd306a49e630df44f2db5c2300191",
+      "local_reference": "downloads/hallucination_refs/VCD",
+      "paper_result": "released full-vocabulary token rule ported to the target decoder",
+      "local_implementation": "official_token_baselines.py",
+      "reused_components": [
+        "contrastive logit equation",
+        "diffusion-noise image construction",
+        "plausibility mask",
+        "released alpha, beta, noise step, and random seed"
+      ]
+    },
+    "MFCD": {
+      "repository": "https://github.com/liubq-dev/mfcd",
+      "commit": "a5cd8de499aa9056171a8c8fc208eda2d3261e13",
+      "local_reference": "downloads/hallucination_refs/MFCD",
+      "paper_result": "released full-vocabulary token rule ported to the target decoder",
+      "local_implementation": "official_token_baselines.py",
+      "reused_components": [
+        "low- and high-frequency image construction",
+        "multi-frequency contrastive equation",
+        "plausibility mask",
+        "released filter type, cutoffs, and decoding coefficients"
+      ]
+    },
+    "PAI": {
+      "repository": "https://github.com/LALBJ/PAI",
+      "commit": "9bbd8bd57a0b0923f996197e4bd3e02cc10b8d58",
+      "local_reference": "downloads/hallucination_refs/PAI",
+      "paper_result": "released attention and full-vocabulary token rules ported to the target decoder",
+      "local_implementation": "official_token_baselines.py",
+      "reused_components": [
+        "image-token attention amplification",
+        "multimodal-versus-text-only CFG equation",
+        "plausibility mask",
+        "released attention, guidance, and layer-span parameters"
+      ]
+    },
+    "REVIS": {
+      "repository": "https://github.com/antgroup/Revis",
+      "commit": "75f4d29d402d4c1c4dbb2c69e88e3aa50cd0c9cc",
+      "local_reference": "downloads/hallucination_refs/REVIS",
+      "paper_result": "released latent intervention",
+      "reused_components": [
+        "direction extraction",
+        "layer calibration",
+        "risk calibration",
+        "hidden-state intervention"
+      ]
+    },
+    "NoLan": {
+      "repository": "https://github.com/lingfengren/NoLan",
+      "commit": "8b6d92589d8e2608f49eb7c4bca211a8c1495723",
+      "local_reference": "official_nolan_qwen3vl.py",
+      "paper_result": "full-vocabulary token-level port",
+      "reused_components": [
+        "symmetric KL coefficient",
+        "dynamic beta-scaled suppression equation",
+        "synchronized multimodal and text-only autoregressive streams"
+      ]
+    },
+    "ConflictVIS": {
+      "repository": "https://github.com/xyliu-cs/ConflictVIS",
+      "commit": "34567635933a3be59ff03fa13f3991da33a7b4f8",
+      "local_reference": "downloads/hallucination_refs/ConflictVIS",
+      "paper_result": "released benchmark annotations"
+    },
+    "HallusionBench": {
+      "repository": "https://github.com/tianyi-lab/HallusionBench",
+      "commit": "744007c232c292942c7f80eb61edb2465482da31",
+      "local_reference": "downloads/hallucination_refs/HallusionBench",
+      "paper_result": "released benchmark annotations"
+    },
+    "POPE": {
+      "repository": "https://github.com/RUCAIBox/POPE",
+      "commit": "08d957b917e5a378a2f99d35b6293c536a66298b",
+      "local_reference": "downloads/hallucination_refs/POPE",
+      "paper_result": "released benchmark annotations and evaluation"
+    }
+  }
+}

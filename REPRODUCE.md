@@ -17,7 +17,7 @@ model weights required).
 Model directories are expected at
 `models/Qwen3-VL-32B-Instruct`, `models/llava-v1.6-34b-hf`, and
 `models/Qwen3-VL-30B-A3B-Instruct`. The lean runtime reads `model_type` from
-`AutoConfig` and dispatches the 30B checkpoint to the official
+`AutoConfig` and dispatches the 30B model to the official
 `Qwen3VLMoeForConditionalGeneration` class; regression tests cover dense/MoE
 dispatch and reject unknown Qwen3-VL architectures.
 
@@ -38,10 +38,9 @@ python analyze_nolan_backfill.py \
   --output result/cprc_robustness/nolan_support_backfill_qwen_llava_v1.json
 ```
 
-The paper's SPC+NoLan row uses `nolan_raw_backfill`, the fixed released
-analytic proposal on learned-route abstentions. The artifact also records a
-separately selected support-gated diagnostic, but that diagnostic is not the
-primary method.
+The optional analysis uses `nolan_raw_backfill`, the fixed released analytic
+proposal on SPC abstentions. The artifact also records a separately selected
+support-gated diagnostic. Neither composition replaces the primary SPC method.
 
 ## Install the analysis environment
 
@@ -62,33 +61,62 @@ python -m pytest -q \
   tests/test_qwen3_vl_model_loading.py \
   tests/test_cdh_mc_candidate_scores.py \
   tests/test_official_contrastive_baselines.py \
+  tests/test_official_nolan_qwen3vl.py \
+  tests/test_official_nolan_external.py \
+  tests/test_official_token_baselines.py \
   tests/test_third_model_mc.py
 ```
 
-## NoLan score-rule comparison
+## Official token-level baselines
 
-The official NoLan release applies dynamic suppression to full-vocabulary
-next-token distributions. For finite MC/QA, we preserve its released equation
-and coefficient while normalizing over the task-native complete answers. For
-example, the Qwen MC development record and frozen transfer are:
+The baseline ports preserve the published full-vocabulary equations and fixed
+parameters. `configs/official_baseline_sources.json` records the upstream
+repositories and revisions. NoLan uses two synchronized autoregressive streams
+and its published dynamic coefficient with $\beta=0.8$. Run matched
+$\beta=0$ and $\beta=0.8$ decoding as follows:
 
 ```bash
-python analyze_candidate_baseline_sweep.py \
-  --input result/cprc_bf16_dev70/Qwen3-VL-32B-Instruct-BF16/results.jsonl \
-  --method nolan --task mc --max-cs-drop 0.04 \
-  --output result/baseline_sweeps/nolan_dev70_mc_qwen32b.json
+CUDA_VISIBLE_DEVICES=0,1,2,3 python evaluate_official_nolan_qwen3vl.py \
+  --input result/cprc_bf16_cpr_unseen/Qwen3-VL-32B-Instruct-BF16/results.jsonl \
+  --models configs/qwen_32b_instruct_nolan_official.json \
+  --output result/official_nolan_token/qwen32b_native_beta0_maxtok64.jsonl \
+  --beta 0 --max-new-tokens 64
 
-python analyze_candidate_baseline_frozen_transfer.py \
-  --development-selection result/baseline_sweeps/nolan_dev70_mc_qwen32b.json \
-  --test result/cprc_bf16_cpr_unseen/Qwen3-VL-32B-Instruct-BF16/results.jsonl \
-  --output result/baseline_frozen_transfer/nolan_cpr_unseen_mc_qwen32b.json
+CUDA_VISIBLE_DEVICES=0,1,2,3 python evaluate_official_nolan_qwen3vl.py \
+  --input result/cprc_bf16_cpr_unseen/Qwen3-VL-32B-Instruct-BF16/results.jsonl \
+  --models configs/qwen_32b_instruct_nolan_official.json \
+  --output result/official_nolan_token/qwen32b_unseen_beta0.8_maxtok64.jsonl \
+  --native-output result/official_nolan_token/qwen32b_native_beta0_maxtok64.jsonl \
+  --beta 0.8 --max-new-tokens 64
 ```
 
-Repeat for QA and replace the score files by the LLaVA development/unseen files
-listed in `configs/strong_baselines_frozen_v1.json`. NoLan keeps the released
-dynamic coefficient; the development step records provenance and reports
-whether the released setting meets the shared CS constraint rather than tuning
-that coefficient.
+Use `configs/llava16_34b_instruct_nolan_official.json` and the LLaVA held-out
+score file for the matched LLaVA run. The task-constrained NoLan control uses
+the same token equation:
+
+```bash
+python evaluate_official_nolan_candidates.py \
+  --input result/cprc_bf16_cpr_unseen/Qwen3-VL-32B-Instruct-BF16/results.jsonl \
+  --models configs/qwen_32b_instruct_nolan_official.json \
+  --output result/official_nolan_token/qwen32b_tokenwise_candidates_beta0.8.jsonl \
+  --beta 0.8
+```
+
+VCD, MFCD, and PAI use their released image transformations, token equations,
+filters, and fixed parameters. After checking out the pinned repositories under
+`downloads/hallucination_refs/`, run:
+
+```bash
+CUDA_VISIBLE_DEVICES=0,1,2,3 python evaluate_official_token_baselines.py \
+  --input result/cprc_bf16_cpr_unseen/Qwen3-VL-32B-Instruct-BF16/results.jsonl \
+  --models configs/qwen_32b_instruct_nolan_official.json \
+  --methods vcd mfcd pai \
+  --output result/official_token_baselines/qwen32b.jsonl
+```
+
+The implementation ports only the model I/O needed by Qwen3-VL and
+LLaVA-NeXT. The published transformations, equations, plausibility filters,
+attention edit, and coefficients remain unchanged.
 
 ## Paired-calibration necessity
 
@@ -152,8 +180,8 @@ python analyze_third_model_mc.py \
   --output result/cprc_robustness/third_model_qwen30b_a3b_mc_v1.json
 ```
 
-The analysis reports native-error/prior-estimate alignment, the frozen MC operating
-point, and three leave-one-family-out fits. No QA or test-family label is used
+The analysis reports native-error/prior-estimate alignment, the selected MC
+setting, and three leave-one-family-out fits. No QA or test-family label is used
 to select a policy.
 
 ## Matched-capacity development shifts
@@ -277,7 +305,7 @@ python analyze_proposal_decomposition.py --task all
 
 Writes `result/paper_revision_stats/proposal_decomposition.json`,
 `mc_only_ablation.json`, and `stability_radius.json`. Every task first replays
-the frozen operating point row by row and verifies it against
+the selected setting row by row and verifies it against
 `result/anchored_cprc/main_test.json`; the verification summary is stored in
 each output. The frozen-replay helpers are self-contained in the script and
 reuse `analyze_hierarchical_eb_lambda_cv.py` and `analyze_spc_gate_pareto.py`.

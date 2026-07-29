@@ -247,6 +247,132 @@
         "llava_qa": [0.26956521739130435, -0.06086956521739131]
       }
     },
+    "nolan_token_qwen3vl": {
+      "status": "blind_complete_official_formula_port",
+      "mitigation": "nolan_token_level",
+      "model": "Qwen3-VL-32B-Instruct",
+      "official_commit": "8b6d92589d8e2608f49eb7c4bca211a8c1495723",
+      "formula": "(1+alpha_t)*logits_image_t-alpha_t*logits_text_t",
+      "dynamic_alpha": "0.8*(tanh(1/symmetric_KL(full_vocab_image_t,full_vocab_text_t))+1)",
+      "decoding": "greedy",
+      "beta": 0.8,
+      "max_new_tokens": 64,
+      "shared_generated_prefix": true,
+      "separate_kv_caches": true,
+      "artifacts": {
+        "implementation": "official_nolan_qwen3vl.py",
+        "evaluator": "evaluate_official_nolan_qwen3vl.py",
+        "configuration": "configs/qwen_32b_instruct_nolan_official.json",
+        "native_rows": "result/official_nolan_token/qwen32b_native_beta0_maxtok64.jsonl",
+        "native_summary": "result/official_nolan_token/qwen32b_native_beta0_maxtok64.summary.json",
+        "blind_rows": "result/official_nolan_token/qwen32b_unseen_beta0.8_maxtok64.jsonl",
+        "summary": "result/official_nolan_token/qwen32b_unseen_beta0.8_maxtok64.summary.json"
+      },
+      "artifact_sha256": {
+        "implementation": "987adaa4ad25c46b807b9d52b7248bf7db1d3e2c7a4d1fb7235543ee3504f1cc",
+        "evaluator": "965deb7ec6d278649b1b4796ede7e335802c466ce26815e7e9c6c55868508f79",
+        "configuration": "0b58b3d28799c0fd3c8dcf52718617b6eac7c086f6ecdf7e4059a6c1c8e515a0",
+        "native_rows": "8eec1dcd0b8890a0cf3b0845a61dd6229ebcf7faa1c988d7b1f3aea92bf9becc",
+        "native_summary": "8fbcf128cdc4440aac1c8446de948c7c29f0f393774642b3e31169ad53ac41c3",
+        "blind_rows": "051d4ff6e27a328d9d85bf527caf6c6e5deed207b5efe9c6e1e48b93e0bf5bfb",
+        "summary": "64effce9186d6bc44c98c99f14631784307d559294b6502403dc3e01b02efcc9"
+      },
+      "test_delta_cf_cs": {
+        "qwen_mc": [0.04782608695652179, -0.017391304347826098],
+        "qwen_qa": [0.15217391304347827, -0.008695652173912993]
+      },
+      "test_repairs_harms": {
+        "qwen_mc_cf": [18, 7],
+        "qwen_mc_cs": [6, 10],
+        "qwen_qa_cf": [37, 2],
+        "qwen_qa_cs": [0, 2]
+      }
+    },
+    "nolan_token_llava16": {
+      "status": "blind_complete_official_formula_port",
+      "mitigation": "nolan_token_level",
+      "model": "LLaVA-1.6-34B-Instruct",
+      "official_commit": "8b6d92589d8e2608f49eb7c4bca211a8c1495723",
+      "formula": "(1+alpha_t)*logits_image_t-alpha_t*logits_text_t",
+      "dynamic_alpha": "0.8*(tanh(1/symmetric_KL(full_vocab_image_t,full_vocab_text_t))+1)",
+      "decoding": "greedy",
+      "beta": 0.8,
+      "max_new_tokens": 64,
+      "shared_generated_prefix": true,
+      "separate_kv_caches": true,
+      "artifacts": {
+        "implementation": "official_nolan_qwen3vl.py",
+        "evaluator": "evaluate_official_nolan_qwen3vl.py",
+        "configuration": "configs/llava16_34b_instruct_nolan_official.json",
+        "native_rows": "result/official_nolan_token/llava34b_native_beta0_maxtok64.jsonl",
+        "native_summary": "result/official_nolan_token/llava34b_native_beta0_maxtok64.summary.json",
+        "blind_rows": "result/official_nolan_token/llava34b_unseen_beta0.8_maxtok64.jsonl",
+        "summary": "result/official_nolan_token/llava34b_unseen_beta0.8_maxtok64.summary.json"
+      },
+      "artifact_sha256": {
+        "implementation": "987adaa4ad25c46b807b9d52b7248bf7db1d3e2c7a4d1fb7235543ee3504f1cc",
+        "evaluator": "965deb7ec6d278649b1b4796ede7e335802c466ce26815e7e9c6c55868508f79",
+        "configuration": "542a9499ec867d3c80f927623645296c6d180e875ffcf8dc49d1212ba63d2714",
+        "native_rows": "80212281f1cb3637f56a1bb4beeb38fd5641e60ab47254eadc9d3bdc08769588",
+        "native_summary": "c29a3cc81f23044152e3d901ae348e9b736f801461de790a882a5a73c06749b0",
+        "blind_rows": "fa96270f94b33407b641bd446fb5e4a376415ec173dc9b14026cef6e6bdf32e5",
+        "summary": "71df84918c071e0a7646046435a1352f00e2e6f1538bd7cdb16ebbb231003ea3"
+      },
+      "test_delta_cf_cs": {
+        "llava_mc": [0.11739130434782608, -0.034782608695652195],
+        "llava_qa": [0.24782608695652175, -0.08695652173913049]
+      },
+      "test_repairs_harms": {
+        "llava_mc_cf": [33, 6],
+        "llava_mc_cs": [1, 9],
+        "llava_qa_cf": [58, 1],
+        "llava_qa_cs": [1, 21]
+      }
+    },
+    "nolan_option_constrained": {
+      "status": "blind_complete_protocol_alignment_control",
+      "mitigation": "nolan_full_vocab_option_constrained",
+      "official_commit": "8b6d92589d8e2608f49eb7c4bca211a8c1495723",
+      "formula": "(1+alpha_t)*logp_image(candidate)-alpha_t*logp_text(candidate)",
+      "dynamic_alpha": "official full-vocabulary token-level alpha_t at the canonical candidate decision",
+      "beta": 0.8,
+      "native_reference": "original benchmark answer",
+      "matched_reference": "beta=0 canonical candidate decoder",
+      "artifacts": {
+        "evaluator": "evaluate_official_nolan_candidates.py",
+        "tests": "tests/test_official_nolan_qwen3vl.py",
+        "qwen_rows": "result/official_nolan_token/qwen32b_tokenwise_candidates_beta0.8.jsonl",
+        "qwen_summary": "result/official_nolan_token/qwen32b_tokenwise_candidates_beta0.8.summary.json",
+        "llava_rows": "result/official_nolan_token/llava34b_tokenwise_candidates_beta0.8.jsonl",
+        "llava_summary": "result/official_nolan_token/llava34b_tokenwise_candidates_beta0.8.summary.json"
+      },
+      "artifact_sha256": {
+        "evaluator": "b956b2bcde295a6e36ed8cbb6acd9b676283966c4b247bb6e9ff2fdde3606569",
+        "tests": "7ce263466f4a4394e7b8ae296fb5be9cf850c51f642f906e5a5fcdadadaee90f",
+        "qwen_rows": "ce595ddb03e1f4e58292bcc925d116bc0d30c837a559994c0373b1bece1b2de4",
+        "qwen_summary": "fe1de4ec28857cad43a3db97e4211acce8857134a3b4f4cffb1950bd80991396",
+        "llava_rows": "9cca11ba1ab01b2b084364add61e721d81fde676dbdc858d53cf4482aece732b",
+        "llava_summary": "25902261ef1b6e9c5a9e20620cff9440091285e33e4f752241416f5ad49ea33f"
+      },
+      "test_delta_cf_cs": {
+        "qwen_mc": [0.10434782608695647, -0.0043478260869564966],
+        "qwen_qa": [0.008695652173912993, 0.0],
+        "llava_mc": [0.0608695652173914, -0.0130434782608696],
+        "llava_qa": [0.24347826086956516, -0.15652173913043477]
+      },
+      "matched_candidate_delta_cf_cs": {
+        "qwen_mc": [0.11304347826086957, 0.008695652173912993],
+        "qwen_qa": [0.23478260869565215, 0.0043478260869564966],
+        "llava_mc": [0.1043478260869566, -0.02608695652173909],
+        "llava_qa": [0.37826086956521735, -0.16956521739130437]
+      },
+      "candidate_native_matches_original": {
+        "qwen_mc_cf_cs": [212, 225],
+        "qwen_qa_cf_cs": [174, 229],
+        "llava_mc_cf_cs": [200, 215],
+        "llava_qa_cf_cs": [197, 221]
+      }
+    },
     "mfcd_candidate": {
       "status": "development_and_blind_complete",
       "mitigation": "mfcd",
